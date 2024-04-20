@@ -2,7 +2,6 @@
 definePageMeta({
   layout: 'start',
 });
-// const { data } = await useFetch("http://semester-api.test/api/absences");
 </script>
 
 <template></template>
