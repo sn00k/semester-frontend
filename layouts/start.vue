@@ -8,7 +8,7 @@ console.log(currentPage);
 
 <template>
   <div
-    class="bg-primary w-screen h-screen text-white flex flex-col"
+    class="bg-primary w-screen h-screen text-white flex flex-col gap-y-4"
     :class="
       currentPage === 'login'
         ? 'items-center py-2'
@@ -18,7 +18,7 @@ console.log(currentPage);
     <div class="flex gap-x-2">
       <h1 class="text-2xl">Semesterappen</h1>
       <HeartIcon class="size-5 self-center text-yellow-200" />
-      <slot />
     </div>
+    <slot />
   </div>
 </template>

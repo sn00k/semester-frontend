@@ -12,9 +12,7 @@ export default {
     extend: {
       colors: {
         primary: '#020617',
-      },
-      fontFamily: {
-        body: ['Open Sans'],
+        card: '#0F172A',
       },
     },
   },
