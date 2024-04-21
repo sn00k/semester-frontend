@@ -15,6 +15,9 @@ export default {
         card: '#0F172A',
       },
     },
+    fontFamily: {
+      sans: ['Inter', 'sans-serif'],
+    },
   },
   plugins: [],
 };
