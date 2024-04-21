@@ -8,7 +8,7 @@ console.log(currentPage);
 
 <template>
   <div
-    class="bg-primary w-screen h-screen text-white flex flex-col gap-y-4"
+    class="bg-primary w-screen h-auto min-h-screen text-white flex flex-col gap-y-4"
     :class="
       currentPage === 'login'
         ? 'items-center py-2'
