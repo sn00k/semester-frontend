@@ -15,21 +15,25 @@ definePageMeta({
       <div class="flex flex-col gap-y-6">
         <div class="flex flex-col gap-y-2">
           <label for="email">Email</label>
-          <input
-            class="rounded-lg px-4 py-3"
-            name="email"
-            type="email"
-            placeholder="Email"
-          />
+          <ClientOnly>
+            <input
+              class="rounded-lg px-4 py-3"
+              name="email"
+              type="email"
+              placeholder="Email"
+            />
+          </ClientOnly>
         </div>
         <div class="flex flex-col gap-y-2">
           <label for="password">Lösenord</label>
-          <input
-            class="rounded-lg px-4 py-3"
-            name="password"
-            type="password"
-            placeholder="Lösenord"
-          />
+          <ClientOnly>
+            <input
+              class="rounded-lg px-4 py-3"
+              name="password"
+              type="password"
+              placeholder="Lösenord"
+            />
+          </ClientOnly>
         </div>
         <button class="mt-2 px-4 py-3 rounded-md bg-yellow-200 text-black">
           Logga in
