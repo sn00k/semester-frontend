@@ -3,7 +3,6 @@ import { HeartIcon } from '@heroicons/vue/24/solid';
 import { useCurrentPage } from '~/composables/useCurrentPage';
 
 const { currentPage } = useCurrentPage();
-console.log(currentPage);
 </script>
 
 <template>
