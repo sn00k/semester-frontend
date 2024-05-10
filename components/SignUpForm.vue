@@ -5,7 +5,6 @@ const API_URL = useRuntimeConfig().public.apiUrl;
 
 const props = defineProps<Invitation>();
 const form = reactive({
-  code: props.code,
   password: '',
   password_confirmation: '',
   first_name: '',
@@ -18,7 +17,7 @@ async function handleSubmit(event: Event) {
     return;
   }
 
-  const url = `${API_URL}/users`;
+  const url = `${API_URL}/invitations/${props.code}/users`;
   await useFetch(url, {
     method: 'POST',
     body: form,
