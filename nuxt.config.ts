@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   runtimeConfig: {
     public: {
-      apiUrl: process.env.API_URL,
+      apiUrl: process.dev ? process.env.API_URL_DEV : process.env.API_URL,
     },
   },
   devtools: { enabled: true },
