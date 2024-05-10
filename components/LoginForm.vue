@@ -7,7 +7,7 @@
     <div class="flex flex-col gap-y-2">
       <label for="email">Email</label>
       <input
-        class="rounded-lg px-4 py-3"
+        class="rounded-lg px-4 py-3 text-black"
         name="email"
         type="email"
         autocomplete="username"
@@ -16,7 +16,7 @@
     <div class="flex flex-col gap-y-2">
       <label for="password">Lösenord</label>
       <input
-        class="rounded-lg px-4 py-3"
+        class="rounded-lg px-4 py-3 text-black"
         name="password"
         type="password"
         autocomplete="current-password"

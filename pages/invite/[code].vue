@@ -32,6 +32,7 @@ watchEffect(async () => {
 
     if (error.value || !data.value) {
       console.error(error);
+      loading.value = false;
       return;
     }
 
