@@ -51,7 +51,6 @@ function dateFormat(date: string) {
           </div>
         </div>
         <div>
-          <span>{{ absence.approved }}</span>
         </div>
       </div>
   </div>
