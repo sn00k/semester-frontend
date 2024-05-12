@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { HeartIcon } from '@heroicons/vue/24/solid';
 import { useCurrentPage } from '~/composables/useCurrentPage';
 
 const { currentPage } = useCurrentPage();
@@ -16,7 +15,7 @@ const { currentPage } = useCurrentPage();
   >
     <div class="flex gap-x-2">
       <h1 class="text-2xl">Semesterappen</h1>
-      <HeartIcon class="size-5 self-center text-yellow-200" />
+      <span class="size-5 self-center text-yellow-200 material-icons">favorite</span>
     </div>
     <slot />
   </div>

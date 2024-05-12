@@ -1,13 +1,33 @@
 <script setup lang="ts">
-import { HeartIcon } from '@heroicons/vue/24/solid';
+const route = useRoute()
 </script>
 
 <template>
-  <div class="bg-primary w-screen h-screen text-white">
-    <div class="flex gap-x-2">
-      <h1 class="text-2xl">Semesterappen</h1>
-      <HeartIcon class="size-5 self-center text-yellow-200" />
+  <div class="bg-white text-black dark:bg-primary dark:text-white w-screen h-screen">
+    <div class="flex flex-col min-h-full h-auto">
+      <div class="flex justify-between items-center py-4 px-2">
+        <div class="flex gap-x-2 items-center justify-start py-4">
+          <h1 class="text-2xl">Semesterappen</h1>
+          <span class="size-5 self-center text-yellow-200 material-icons">favorite</span>
+        </div>
+        <div class="flex gap-x-2">
+          <span v-if="$colorMode.value === 'dark'" @click="$colorMode.value = 'light'" class="size-5 self-center text-slate-500 material-icons cursor-pointer">light_mode</span>
+          <span v-else @click="$colorMode.value = 'dark'" class="size-5 self-center text-slate-500 material-icons cursor-pointer">dark_mode</span>
+        </div>
+      </div>
+      <div class="flex justify-between p-4">
+        <div class="flex gap-x-4 items-center">
+          <img class="inline-block size-6 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+          <h1 class="text-2xl font-bold text-center">{{ route.meta.title }}</h1>
+        </div>
+        <div>
+          <span class="material-icons">notifications</span>
+        </div>
+      </div>
+      <div class="grow bg-zinc-100 pb-24">
+        <NuxtPage />
+      </div>
+      <Footer />
     </div>
-    <slot />
   </div>
 </template>
