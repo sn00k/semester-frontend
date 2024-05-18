@@ -13,18 +13,20 @@ const route = useRoute();
           >
         </div>
         <div class="flex gap-x-2">
-          <span
-            v-if="$colorMode.value === 'dark'"
-            @click="$colorMode.value = 'light'"
-            class="size-5 self-center text-slate-500 material-icons cursor-pointer"
-            >light_mode</span
-          >
-          <span
-            v-else
-            @click="$colorMode.value = 'dark'"
-            class="size-5 self-center text-slate-500 material-icons cursor-pointer"
-            >dark_mode</span
-          >
+          <ClientOnly>
+            <span
+              v-if="$colorMode.value === 'dark'"
+              @click="$colorMode.value = 'light'"
+              class="size-5 self-center text-slate-500 material-icons cursor-pointer"
+              >light_mode</span
+            >
+            <span
+              v-else
+              @click="$colorMode.value = 'dark'"
+              class="size-5 self-center text-slate-500 material-icons cursor-pointer"
+              >dark_mode</span
+            >
+          </ClientOnly>
         </div>
       </div>
       <div class="flex justify-between p-4">
