@@ -3,17 +3,20 @@ export default defineNuxtConfig({
   app: {
     head: {
       link: [
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/icon?family=Material+Icons' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0' },
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/icon?family=Material+Icons',
+        },
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0',
+        },
       ],
     },
   },
   runtimeConfig: {
     public: {
-      apiUrl:
-        process.env.NODE_ENV === 'development'
-          ? process.env.API_URL_DEV
-          : process.env.API_URL,
+      apiUrl: process.env.API_URL,
     },
   },
   devtools: { enabled: true },
@@ -27,7 +30,7 @@ export default defineNuxtConfig({
     componentName: 'ColorScheme',
     classPrefix: '',
     classSuffix: '',
-    storageKey: 'nuxt-color-mode'
+    storageKey: 'nuxt-color-mode',
   },
   css: ['~/assets/css/main.css'],
   postcss: {
