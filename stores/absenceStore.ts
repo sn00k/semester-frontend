@@ -1,10 +1,10 @@
-import { defineStore } from 'pinia';
+// import { defineStore } from 'pinia';
 
-type Absence = {
-    
-}
-export const useAbsenceStore = defineStore('absences', () => {
+// type Absence = {
 
-    const
-  return {  };
-});
+// }
+// export const useAbsenceStore = defineStore('absences', () => {
+
+//     const
+//   return {  };
+// });

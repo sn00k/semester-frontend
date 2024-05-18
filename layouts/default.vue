@@ -25,7 +25,7 @@ const route = useRoute()
         </div>
       </div>
       <div class="grow bg-zinc-100 pb-24">
-        <NuxtPage />
+          <NuxtPage />
       </div>
       <Footer />
     </div>
