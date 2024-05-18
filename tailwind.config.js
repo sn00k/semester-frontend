@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+import colors from 'tailwindcss/colors';
+
 export default {
   darkMode: 'class',
   content: [
@@ -11,14 +13,22 @@ export default {
   ],
   theme: {
     extend: {
+      appearance: ['responsive'],
       colors: {
-        primary: '#020617',
+        primary: {
+          dark: colors.zinc[950],
+          light: colors.zinc[100],
+        },
         card: '#0F172A',
+        accent: {
+          dark: colors.amber[300],
+          light: colors.blue[500],
+        },
       },
     },
     fontFamily: {
       sans: ['Inter', 'sans-serif'],
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/forms')],
 };

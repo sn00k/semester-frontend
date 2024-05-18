@@ -1,7 +1,9 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="dark:bg-primary bg-gray-white rounded-md px-4 py-6 w-full h-full">
+  <div
+    class="bg-white dark:bg-neutral-900 dark:text-white gap-x-4 mt-4 items-center w-full p-2 rounded-md"
+  >
     <slot />
   </div>
 </template>

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query';
+import Card from '~/components/Card.vue';
+import type { Absences } from '~/types';
 
 useState('pageTitle', () => 'Min Sida');
 definePageMeta({
   middleware: 'auth',
   title: 'Min Sida',
 });
-import type { Absences } from '~/types';
+
 const API_URL = useRuntimeConfig().public.apiUrl;
 const fetcher = async (): Promise<Absences> =>
   await fetch(`${API_URL}/absences`, {
@@ -37,11 +39,7 @@ function dateFormat(date: string) {
 
 <template>
   <div class="flex flex-col p-4">
-    <div
-      class="flex bg-white dark:text-black gap-x-4 mt-4 items-center w-full p-2 rounded-md"
-      v-for="absence in absences?.data"
-      :key="absence.id"
-    >
+    <Card class="flex" v-for="absence in absences?.data" :key="absence.id">
       <div
         class="inline-block bg-gray-300 size-10 rounded-full ring-2 ring-white"
       ></div>
@@ -74,6 +72,6 @@ function dateFormat(date: string) {
         </div>
       </div>
       <div></div>
-    </div>
+    </Card>
   </div>
 </template>

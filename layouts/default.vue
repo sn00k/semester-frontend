@@ -3,12 +3,14 @@ const route = useRoute();
 </script>
 
 <template>
-  <div class="bg-white text-black dark:bg-primary dark:text-white h-screen">
+  <div
+    class="bg-primary-light text-black dark:bg-primary-dark dark:text-white h-screen"
+  >
     <div class="flex flex-col min-h-full h-auto">
       <div class="flex justify-between items-center py-4 px-2">
         <div class="flex gap-x-2 items-center justify-start py-4">
           <h1 class="text-2xl">Semesterappen</h1>
-          <span class="size-5 self-center text-yellow-200 material-icons"
+          <span class="size-5 self-center dark:text-yellow-300 material-icons"
             >favorite</span
           >
         </div>
@@ -42,7 +44,7 @@ const route = useRoute();
           <span class="material-icons">notifications</span>
         </div>
       </div>
-      <div class="grow bg-zinc-100 pb-24">
+      <div class="grow bg-primary-light dark:bg-primary-dark pb-24">
         <NuxtPage />
       </div>
       <Footer />
