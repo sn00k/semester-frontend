@@ -110,8 +110,8 @@ watchEffect(() => {
         >
           <input
             :class="[
-              'radio-button dark:focus:border-accent-dark dark:checked:ring-offset-accent-dark dark:hover:border-accent-dark dark:focus:ring-offset-accent-dark dark:focus:ring-accent-dark ring-2 dark:border-accent-dark dark:checked:after:bg-accent-dark dark:bg-neutral-900 bg-white dark:ring-accent-dark dark:text-accent-dark dark:checked:bg-transparent',
-              'checked:focus:ring-offset-transparent focus:ring-offset-black checked:bg-white checked:ring-offset-accent-light focus:ring-black checked:focus:ring-accent-light ring-offset-black dark:ring-offset-accent-dark text-accent-light border-0 ring-offset-2 focus:checked:bg-white focus:border-accent-light hover:border-black hover:checked:bg-white checked:ring-accent-light border-black checked:after:bg-accent-light ring-black',
+              'dark:checked:ring-accent-dark dark:focus:checked:ring-offset-accent-dark dark:focus:checked:ring-accent-dark dark:focus:ring-white dark:focus:ring-offset-white radio-button dark:focus:border-accent-dark dark:checked:ring-offset-accent-dark dark:hover:border-accent-dark ring-2 dark:border-accent-dark dark:checked:after:bg-accent-dark dark:bg-neutral-900 bg-white dark:ring-white dark:checked:bg-transparent',
+              'checked:focus:ring-offset-transparent focus:ring-offset-black checked:bg-white checked:ring-offset-accent-light focus:ring-black checked:focus:ring-accent-light ring-offset-black dark:ring-offset-white text-accent-light border-0 ring-offset-2 focus:checked:bg-white focus:border-accent-light hover:border-black hover:checked:bg-white checked:ring-accent-light border-black checked:after:bg-accent-light ring-black',
             ]"
             type="radio"
             :id="absenceType.id"
