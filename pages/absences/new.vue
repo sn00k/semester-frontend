@@ -9,7 +9,7 @@ import {
   onBeforeMount,
 } from 'vue';
 import Card from '~/components/Card.vue';
-import type { AbsenceTypes, AbsenceType, User } from '~/types';
+import type { AbsenceType, User } from '~/types';
 
 useState('pageTitle', () => 'Ny Frånvaro');
 definePageMeta({
@@ -23,6 +23,7 @@ const user: Ref<User | null> = ref(null);
 const absenceTypes: Ref<AbsenceType[] | undefined> = ref();
 const selectedCompanyId: Ref<string | null> = ref(null);
 const showAbsenceTypes = ref(false);
+const selectedAbsenceType = ref<null | string>(null);
 
 const { data, error } = useQuery({
   queryKey: ['user'],
@@ -60,6 +61,11 @@ const {
   enabled: computed(() => !!selectedCompanyId.value),
 });
 
+function handleCompanyChange(companyId: string) {
+  selectedCompanyId.value = companyId;
+  refetchAbsenceTypes();
+}
+
 watchEffect(() => {
   if (error.value) {
     console.error('Error fetching user data:', error.value);
@@ -68,7 +74,6 @@ watchEffect(() => {
     user.value = data.value;
     console.log(data.value);
 
-    selectedCompanyId.value = data.value.employments[0].id;
     absenceTypes.value = absenceTypesData.value;
   }
 });
@@ -76,76 +81,92 @@ watchEffect(() => {
 <template>
   <div class="flex flex-col p-4">
     <!-- Company -->
-    <Card class="flex">
-      <select class="dark:text-black w-full p-2 rounded-md">
-        <option
-          v-for="company in user?.employments"
-          :key="company.id"
-          :value="company.id"
-          @select="selectedCompanyId = company.id"
-          :selected="company.id === selectedCompanyId"
-        >
-          {{ company.name }}
-        </option>
-      </select>
-    </Card>
-
-    <!-- Absence type -->
-    <h2>Registrera ny frånvaro</h2>
-    <Card>
-      <div class="flex py-4 px-3 justify-between">
-        <h2>Semester</h2>
-        <span
-          @click="showAbsenceTypes = !showAbsenceTypes"
-          class="material-icons"
-        >
-          expand_more
-        </span>
-      </div>
-      <div v-if="showAbsenceTypes" class="flex flex-col">
-        <div
-          v-for="absenceType in absenceTypes"
-          :key="absenceType.id"
-          class="flex p-3 gap-x-3 items-center"
-        >
+    <h2 class="pl-2">Registrera ny frånvaro</h2>
+    <Card class="flex flex-col p-0">
+      <div
+        v-for="company in user?.employments"
+        :key="company.id"
+        class="flex p-4 gap-x-3 w-full border-b-2 last:border-b-0"
+      >
+        <div class="flex justify-start items-center gap-x-4">
           <input
             :class="[
               'dark:checked:ring-accent-dark dark:focus:checked:ring-offset-accent-dark dark:focus:checked:ring-accent-dark dark:focus:ring-white dark:focus:ring-offset-white radio-button dark:focus:border-accent-dark dark:checked:ring-offset-accent-dark dark:hover:border-accent-dark ring-2 dark:border-accent-dark dark:checked:after:bg-accent-dark dark:bg-neutral-900 bg-white dark:ring-white dark:checked:bg-transparent',
               'checked:focus:ring-offset-transparent focus:ring-offset-black checked:bg-white checked:ring-offset-accent-light focus:ring-black checked:focus:ring-accent-light ring-offset-black dark:ring-offset-white text-accent-light border-0 ring-offset-2 focus:checked:bg-white focus:border-accent-light hover:border-black hover:checked:bg-white checked:ring-accent-light border-black checked:after:bg-accent-light ring-black',
             ]"
             type="radio"
-            :id="absenceType.id"
-            :value="absenceType.id"
-            name="absenceType"
+            :id="company.id"
+            :value="company.id"
+            name="company_id"
+            :checked="selectedCompanyId === company.id"
+            @change="handleCompanyChange(company.id)"
           />
-          <label :for="absenceType.id">{{ absenceType.name }}</label>
+          <span
+            class="w-10 h-10 p-2 bg-gray-300 rounded-full text-xs text-center justify-center items-center flex"
+          >
+            Logo
+          </span>
+          <label :for="company.id">{{ company.name }}</label>
         </div>
       </div>
     </Card>
+
+    <!-- Absence type -->
+    <template v-if="selectedCompanyId">
+      <h2 class="pl-2 pt-4">Typ av frånvaro</h2>
+      <Card class="py-0">
+        <div
+          class="flex py-3 px-2 justify-between cursor-pointer"
+          @click="showAbsenceTypes = !showAbsenceTypes"
+        >
+          <h2>{{ selectedAbsenceType ?? 'Frånvarotyp' }}</h2>
+          <span class="material-icons">
+            {{ showAbsenceTypes ? 'expand_less' : 'expand_more' }}
+          </span>
+        </div>
+        <div v-show="showAbsenceTypes" class="flex flex-col">
+          <div
+            v-for="absenceType in absenceTypes"
+            :key="absenceType.id"
+            class="flex p-3 gap-x-3 items-center"
+          >
+            <input
+              :class="[
+                'dark:checked:ring-accent-dark dark:focus:checked:ring-offset-accent-dark dark:focus:checked:ring-accent-dark dark:focus:ring-white dark:focus:ring-offset-white radio-button dark:focus:border-accent-dark dark:checked:ring-offset-accent-dark dark:hover:border-accent-dark ring-2 dark:border-accent-dark dark:checked:after:bg-accent-dark dark:bg-neutral-900 bg-white dark:ring-white dark:checked:bg-transparent',
+                'checked:focus:ring-offset-transparent focus:ring-offset-black checked:bg-white checked:ring-offset-accent-light focus:ring-black checked:focus:ring-accent-light ring-offset-black dark:ring-offset-white text-accent-light border-0 ring-offset-2 focus:checked:bg-white focus:border-accent-light hover:border-black hover:checked:bg-white checked:ring-accent-light border-black checked:after:bg-accent-light ring-black',
+              ]"
+              type="radio"
+              :id="absenceType.id"
+              :value="absenceType.id"
+              name="absenceType"
+              @change="selectedAbsenceType = absenceType.name"
+            />
+            <label class="cursor-pointer" :for="absenceType.id">{{
+              absenceType.name
+            }}</label>
+          </div>
+        </div>
+      </Card>
+    </template>
   </div>
 </template>
 
 <style scoped>
+/* TODO: Add these to tailwindcss classes to the elements */
 .radio-button {
   appearance: none;
   width: 20px;
   height: 20px;
-  /* border: 1px solid yellow; */
   border-radius: 50%;
   outline: none;
   position: relative;
 }
-
-/* .radio-button:checked {
-  background-color: yellow;
-} */
 
 .radio-button:checked::after {
   content: '';
   display: block;
   width: 10px;
   height: 10px;
-  /* background: yellow; */
   border-radius: 50%;
   position: absolute;
   top: 50%;
