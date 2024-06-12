@@ -12,7 +12,7 @@ import Menu from '~/components/Menu.vue';
     <div class="flex gap-x-2"></div>
   </div>
   <div
-    class="flex flex-col lg:flex-row-reverse bg-white text-black dark:bg-primary dark:text-white w-screen min-h-full h-auto"
+    class="flex flex-col lg:flex-row-reverse bg-white text-black dark:bg-primary dark:text-white w-screen min-h-screen h-auto"
   >
     <div class="flex flex-col lg:grow min-h-full h-auto">
       <!-- Content area-->
