@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { useMenuStore } from '~/stores/menuStore';
 import { storeToRefs } from 'pinia';
-const route = useRoute()
+const route = useRoute();
 const menuStore = useMenuStore();
 const { menuItems } = storeToRefs(menuStore);
 console.log(route.fullPath);
-
 </script>
 
 <template>
@@ -22,7 +21,7 @@ console.log(route.fullPath);
         >
           <div
             class="flex flex-col items-center justify-center"
-            :class="{'lg:-ml-0.5': route.fullPath === item.route}"
+            :class="{ 'lg:-ml-0.5': route.fullPath === item.route }"
           >
             <span class="size-6 material-icons" v-html="item.icon"></span>
             <span>{{ item.name }}</span>
