@@ -16,7 +16,7 @@ console.log(route.fullPath);
         <router-link
           :to="item.route"
           :key="item.name"
-          active-class="border-t-2 lg:border-l-2 lg:border-t-0 lg:dark:border-l-yellow-400 text-blue-500 lg:border-l-blue-500 dark:border-t-yellow-400 dark:text-yellow-400"
+          active-class="border-t-2 lg:border-l-2 lg:border-t-0 lg:dark:border-l-yellow-400 text-blue-500 lg:border-l-blue-500 border-t-blue-500 dark:border-t-yellow-400 dark:text-yellow-400"
           class="inline-flex px-2 py-4 text-sm flex-col items-center justify-center"
         >
           <div
