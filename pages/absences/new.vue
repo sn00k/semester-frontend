@@ -109,7 +109,7 @@ watchEffect(() => {
           class="flex p-3 gap-x-3 items-center"
         >
           <input
-            class="radio-button dark:focus:bg-none ring-2 dark:bg-neutral-900 dark:ring-accent-dark dark:text-accent-dark text-accent-light dark:checked:bg-transparent checked:bg-accent-light"
+            class="radio-button dark:focus:border-accent-dark dark:hover:border-accent-dark dark:focus:ring-0 dark:focus:ring-offset-transparent dark:focus:ring-accent-dark ring-2 dark:border-accent-dark dark:checked:after:bg-accent-dark dark:bg-neutral-900 bg-white dark:ring-accent-dark dark:text-accent-dark text-accent-light dark:checked:bg-transparent checked:bg-accent-light focus:border-accent-light hover:border-accent-light focus:ring-accent-light border-accent-light checked:after:bg-accent-light ring-accent-light"
             type="radio"
             :id="absenceType.id"
             :value="absenceType.id"
@@ -127,7 +127,7 @@ watchEffect(() => {
   appearance: none;
   width: 20px;
   height: 20px;
-  border: 1px solid yellow;
+  /* border: 1px solid yellow; */
   border-radius: 50%;
   outline: none;
   position: relative;
@@ -142,7 +142,7 @@ watchEffect(() => {
   display: block;
   width: 10px;
   height: 10px;
-  background: yellow;
+  /* background: yellow; */
   border-radius: 50%;
   position: absolute;
   top: 50%;
