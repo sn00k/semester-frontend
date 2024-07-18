@@ -3,14 +3,16 @@ import Loading from '~/components/Loading.vue';
 import Card from '~/components/Card.vue';
 import { useAuthStore } from '~/stores/authStore';
 import { storeToRefs } from 'pinia';
-
+import type { User } from '~/types';
 type LoginData = {
   type: string;
   accessToken: string;
+  user: User;
 };
 
 const API_URL = useRuntimeConfig().public.apiUrl;
-
+const authStore = useAuthStore();
+const { setUser } = authStore;
 const loading = ref(false);
 const email = ref('');
 const password = ref('');
@@ -32,11 +34,14 @@ async function handleLogin() {
     errors.value = error.value?.data?.message || 'Okänt fel';
     return;
   }
-
   const loginData = data.value as LoginData;
+  setUser(loginData.user);
   useCookie('token', {
     expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
   }).value = loginData.accessToken;
+  
+  const { isAuthenticated } = storeToRefs(authStore);
+  if (isAuthenticated.value) navigateTo('/');
 }
 
 watchEffect(() => {

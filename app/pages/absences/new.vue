@@ -10,6 +10,7 @@ import {
 } from 'vue';
 import DatePicker from 'vue-tailwind-datepicker';
 import Card from '~/components/Card.vue';
+import { useAuthStore } from '~/stores/authStore';
 import type { AbsenceType, User } from '~/types';
 
 useState('pageTitle', () => 'Ny Frånvaro');
@@ -25,6 +26,7 @@ const absenceTypes: Ref<AbsenceType[] | undefined> = ref();
 const selectedCompanyId: Ref<string | null> = ref(null);
 const showAbsenceTypes = ref(false);
 const selectedAbsenceType = ref<null | string>(null);
+const selectedTypeId = ref<null | string>(null);
 const absenceDates = ref({
   startDate: '',
   endDate: '',
@@ -69,18 +71,34 @@ function handleCompanyChange(companyId: string) {
   selectedCompanyId.value = companyId;
   refetchAbsenceTypes();
 }
-
+function selectAbsenceType(absenceType: AbsenceType) {
+  selectedAbsenceType.value = absenceType.name;
+  selectedTypeId.value = absenceType.id;
+}
 watchEffect(() => {
   if (error.value) {
     console.error('Error fetching user data:', error.value);
   }
   if (data.value) {
     user.value = data.value;
-    console.log(data.value);
-
     absenceTypes.value = absenceTypesData.value;
   }
 });
+function submitAbsence() {
+  useFetch(`${API_URL}/absences`, {
+    method: 'POST',
+    body: {
+      company_id: selectedCompanyId.value,
+      type_id: selectedTypeId.value,
+      start_at: absenceDates.value.startDate,
+      end_at: absenceDates.value.endDate,
+      user_id: useAuthStore().user.id,
+    },
+    headers: {
+      Authorization: `Bearer ${useCookie('token').value}`,
+    },
+  });
+}
 </script>
 <template>
   <div class="flex flex-col p-4">
@@ -143,7 +161,7 @@ watchEffect(() => {
               :id="absenceType.id"
               :value="absenceType.id"
               name="absenceType"
-              @change="selectedAbsenceType = absenceType.name"
+              @change="selectAbsenceType(absenceType)"
             />
             <label class="cursor-pointer" :for="absenceType.id">{{
               absenceType.name
@@ -164,6 +182,18 @@ watchEffect(() => {
           no-input
           :shortcuts="false"
         ></DatePicker>
+      </div>
+    </template>
+    <template
+      v-if="selectedAbsenceType && absenceDates.startDate && selectedCompanyId"
+    >
+      <div class="flex justify-center items-center py-8">
+        <button
+          class="dark:bg-accent-dark dark:text-black rounded-lg w-40 px-2 py-1"
+          @click="submitAbsence"
+        >
+          Skicka ansökan
+        </button>
       </div>
     </template>
   </div>
