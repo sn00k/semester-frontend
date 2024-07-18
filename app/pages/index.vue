@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query';
-import Card from '~/components/Card.vue';
+import { Card } from '~/components/card';
 import type { Absences } from '~/types';
 
 useState('pageTitle', () => 'Min Sida');
@@ -70,7 +70,7 @@ function dateFormat(date: string) {
           >
         </div>
       </div>
-      <div>
+      <div class="bg-gray-100 dark:text-white dark:bg-zinc-800">
         <div
           class="flex items-center gap-x-2 rounded-md border border-gray-400 px-2 py-1"
         >

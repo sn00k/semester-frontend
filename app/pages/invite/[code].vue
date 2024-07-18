@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import SignUpForm from '~/components/SignUpForm.vue';
-import Loading from '~/components/Loading.vue';
-import Card from '~/components/Card.vue';
+import { SignUpForm } from '~/components/forms';
+import { Loading } from '~/components/loading';
+import { Card } from '~/components/card';
 import type { Invitation } from '~/types';
 
 definePageMeta({

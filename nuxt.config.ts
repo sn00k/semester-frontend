@@ -27,7 +27,7 @@ export default defineNuxtConfig({
 
   devtools: { enabled: true },
   plugins: ['@/plugins/pinia.ts'],
-  modules: ['@vueuse/nuxt', '@nuxtjs/color-mode', 'dayjs-nuxt'],
+  modules: ['@vueuse/nuxt', '@nuxtjs/color-mode', 'dayjs-nuxt', 'shadcn-nuxt'],
   dayjs: {
     locales: ['en', 'sv'],
     plugins: ['relativeTime', 'utc', 'timezone'],
@@ -46,6 +46,11 @@ export default defineNuxtConfig({
   },
 
   css: ['@/assets/css/main.css'],
+
+  shadcn: {
+    prefix: '',
+    componentDir: './app/components',
+  },
 
   postcss: {
     plugins: {
