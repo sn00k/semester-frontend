@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Card from '~/components/Card.vue';
-import LoginForm from '~/components/LoginForm.vue';
+import { Card } from '~/components/card';
+import { LoginForm } from '~/components/forms';
 import { useAuthStore } from '~/stores/authStore';
 import { storeToRefs } from 'pinia';
 

@@ -9,7 +9,7 @@ import {
   onBeforeMount,
 } from 'vue';
 import DatePicker from 'vue-tailwind-datepicker';
-import Card from '~/components/Card.vue';
+import { Card } from '~/components/card';
 import { useAuthStore } from '~/stores/authStore';
 import type { AbsenceType, User } from '~/types';
 

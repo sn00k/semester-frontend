@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Loading from '~/components/Loading.vue';
-import Card from '~/components/Card.vue';
+import { Loading } from '~/components/loading';
+import { Card } from '~/components/card';
 import { useAuthStore } from '~/stores/authStore';
 import { storeToRefs } from 'pinia';
 import type { User } from '~/types';
