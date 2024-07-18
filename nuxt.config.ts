@@ -1,5 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  future: {
+    compatibilityVersion: 4
+  },
+  compatibilityDate: '2024-07-18',
   app: {
     head: {
       link: [
@@ -14,14 +18,17 @@ export default defineNuxtConfig({
       ],
     },
   },
+
   runtimeConfig: {
     public: {
       apiUrl: process.env.API_URL,
     },
   },
+
   devtools: { enabled: true },
   plugins: ['~/plugins/pinia.ts'],
   modules: ['@vueuse/nuxt', '@nuxtjs/color-mode'],
+
   colorMode: {
     preference: 'system', // default value of $colorMode.preference
     fallback: 'light', // fallback value if not system preference found
@@ -32,7 +39,9 @@ export default defineNuxtConfig({
     classSuffix: '',
     storageKey: 'nuxt-color-mode',
   },
-  css: ['~/assets/css/main.css'],
+
+  css: ['@/assets/css/main.css'],
+
   postcss: {
     plugins: {
       tailwindcss: {},
