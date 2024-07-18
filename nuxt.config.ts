@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   future: {
-    compatibilityVersion: 4
+    compatibilityVersion: 4,
   },
   compatibilityDate: '2024-07-18',
   app: {
@@ -26,7 +26,7 @@ export default defineNuxtConfig({
   },
 
   devtools: { enabled: true },
-  plugins: ['~/plugins/pinia.ts'],
+  plugins: ['@/plugins/pinia.ts'],
   modules: ['@vueuse/nuxt', '@nuxtjs/color-mode'],
 
   colorMode: {

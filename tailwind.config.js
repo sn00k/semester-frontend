@@ -10,6 +10,7 @@ export default {
     './app/plugins/**/*.{js,ts}',
     './app/app.vue',
     './error.vue',
+    './node_modules/vue-tailwind-datepicker/**/*.js',
   ],
   theme: {
     extend: {
@@ -24,6 +25,8 @@ export default {
           dark: colors.amber[300],
           light: colors.blue[500],
         },
+      'vtd-primary': colors.sky, // Light mode Datepicker color
+      'vtd-secondary': colors.gray, // Dark mode Datepicker color
       },
     },
     fontFamily: {
