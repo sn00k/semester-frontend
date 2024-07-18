@@ -7,6 +7,15 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/accordion';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/dialog';
 import type { Absences } from '~/types';
 
 useState('pageTitle', () => 'Min Sida');
@@ -130,12 +139,30 @@ watchEffect(() => {
             v-if="isCollapsed"
           >
             <AccordionContent class="accordion-content flex w-full">
-              <Button
-                class="flex-1 mx-2 bg-white ring-2 rounded-xl ring-accent-light text-accent-light"
-              >
-                <span class="material-icons">delete_forever</span>
-                <span>Radera</span>
-              </Button>
+              <Dialog>
+                <DialogTrigger as-child>
+                  <Button
+                    class="flex-1 mx-2 bg-white ring-2 rounded-xl ring-accent-light text-accent-light"
+                  >
+                    <span class="material-icons">delete_forever</span>
+                    <span>Radera</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent class="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Radera Frånvaro</DialogTitle>
+                    <DialogDescription>
+                      Är du säker på att du vill radera denna frånvaro?
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter
+                    class="gap-y-4 sm:flex-row-reverse sm:justify-start"
+                  >
+                    <Button variant="secondary"> Avbryt </Button>
+                    <Button variant="secondary"> Bekräfta </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
               <Button
                 class="flex-1 mx-2 ring-2 rounded-xl ring-accent-light bg-accent-light text-white"
               >
