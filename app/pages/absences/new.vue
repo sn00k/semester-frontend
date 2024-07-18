@@ -10,12 +10,13 @@ import {
 } from 'vue';
 import DatePicker from 'vue-tailwind-datepicker';
 import Card from '~/components/Card.vue';
+import { useAuthStore } from '~/stores/authStore';
 import type { AbsenceType, User } from '~/types';
 
 useState('pageTitle', () => 'Ny Frånvaro');
 definePageMeta({
   middleware: 'auth',
-  title: 'Ny Frånvaro',
+  title: 'Frånvaro',
 });
 
 const API_URL = useRuntimeConfig().public.apiUrl;
@@ -25,9 +26,11 @@ const absenceTypes: Ref<AbsenceType[] | undefined> = ref();
 const selectedCompanyId: Ref<string | null> = ref(null);
 const showAbsenceTypes = ref(false);
 const selectedAbsenceType = ref<null | string>(null);
-const startAt = ref('');
-const endAt = ref('');
-
+const selectedTypeId = ref<null | string>(null);
+const absenceDates = ref({
+  startDate: '',
+  endDate: '',
+});
 const { data, error } = useQuery({
   queryKey: ['user'],
   queryFn: async (): Promise<User> => {
@@ -68,23 +71,52 @@ function handleCompanyChange(companyId: string) {
   selectedCompanyId.value = companyId;
   refetchAbsenceTypes();
 }
-
+function selectAbsenceType(absenceType: AbsenceType) {
+  selectedAbsenceType.value = absenceType.name;
+  selectedTypeId.value = absenceType.id;
+}
 watchEffect(() => {
   if (error.value) {
     console.error('Error fetching user data:', error.value);
   }
   if (data.value) {
     user.value = data.value;
-    console.log(data.value);
-
     absenceTypes.value = absenceTypesData.value;
   }
 });
+function submitAbsence() {
+  useFetch(`${API_URL}/absences`, {
+    method: 'POST',
+    body: {
+      company_id: selectedCompanyId.value,
+      type_id: selectedTypeId.value,
+      start_at: absenceDates.value.startDate,
+      end_at: absenceDates.value.endDate,
+      user_id: useAuthStore().user.id,
+    },
+    headers: {
+      Authorization: `Bearer ${useCookie('token').value}`,
+    },
+  });
+}
 </script>
 <template>
   <div class="flex flex-col p-4">
     <!-- Company -->
-    <h2 class="pl-2">Registrera ny frånvaro</h2>
+    <Headline>
+      <template #left>
+        <img
+          class="inline-block size-8 rounded-full ring-2 ring-white"
+          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+          alt=""
+        />
+      </template>
+      <template #right>
+        <NuxtLink href="/notifications">
+          <span class="material-icons lg:hidden">notifications</span>
+        </NuxtLink>
+      </template>
+    </Headline>
     <Card class="flex flex-col p-0">
       <div
         v-for="company in user?.employments"
@@ -142,7 +174,7 @@ watchEffect(() => {
               :id="absenceType.id"
               :value="absenceType.id"
               name="absenceType"
-              @change="selectedAbsenceType = absenceType.name"
+              @change="selectAbsenceType(absenceType)"
             />
             <label class="cursor-pointer" :for="absenceType.id">{{
               absenceType.name
@@ -153,15 +185,28 @@ watchEffect(() => {
     </template>
 
     <template v-if="selectedAbsenceType">
-      <div class="py-4">
+      <div>
         <DatePicker
-          class="w-full"
-          v-model="startAt"
+          class="py-4 px-4 border-none"
+          v-model="absenceDates"
           as-single
           week-number
           use-range
           no-input
+          :shortcuts="false"
         ></DatePicker>
+      </div>
+    </template>
+    <template
+      v-if="selectedAbsenceType && absenceDates.startDate && selectedCompanyId"
+    >
+      <div class="flex justify-center items-center py-8">
+        <button
+          class="dark:bg-accent-dark bg-accent-light text-white dark:text-black rounded-lg w-40 px-2 py-2"
+          @click="submitAbsence"
+        >
+          Skicka ansökan
+        </button>
       </div>
     </template>
   </div>
