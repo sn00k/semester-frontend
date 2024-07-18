@@ -27,8 +27,13 @@ export default defineNuxtConfig({
 
   devtools: { enabled: true },
   plugins: ['@/plugins/pinia.ts'],
-  modules: ['@vueuse/nuxt', '@nuxtjs/color-mode'],
-
+  modules: ['@vueuse/nuxt', '@nuxtjs/color-mode', 'dayjs-nuxt'],
+  dayjs: {
+    locales: ['en', 'sv'],
+    plugins: ['relativeTime', 'utc', 'timezone'],
+    defaultLocale: 'en',
+    defaultTimezone: 'Europe/Stockholm',
+  },
   colorMode: {
     preference: 'system', // default value of $colorMode.preference
     fallback: 'light', // fallback value if not system preference found

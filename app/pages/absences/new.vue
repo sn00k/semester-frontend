@@ -16,7 +16,7 @@ import type { AbsenceType, User } from '~/types';
 useState('pageTitle', () => 'Ny Frånvaro');
 definePageMeta({
   middleware: 'auth',
-  title: 'Ny Frånvaro',
+  title: 'Frånvaro',
 });
 
 const API_URL = useRuntimeConfig().public.apiUrl;
@@ -103,7 +103,20 @@ function submitAbsence() {
 <template>
   <div class="flex flex-col p-4">
     <!-- Company -->
-    <h2 class="pl-2">Registrera ny frånvaro</h2>
+    <Headline>
+      <template #left>
+        <img
+          class="inline-block size-8 rounded-full ring-2 ring-white"
+          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+          alt=""
+        />
+      </template>
+      <template #right>
+        <NuxtLink href="/notifications">
+          <span class="material-icons lg:hidden">notifications</span>
+        </NuxtLink>
+      </template>
+    </Headline>
     <Card class="flex flex-col p-0">
       <div
         v-for="company in user?.employments"
@@ -189,7 +202,7 @@ function submitAbsence() {
     >
       <div class="flex justify-center items-center py-8">
         <button
-          class="dark:bg-accent-dark dark:text-black rounded-lg w-40 px-2 py-1"
+          class="dark:bg-accent-dark bg-accent-light text-white dark:text-black rounded-lg w-40 px-2 py-2"
           @click="submitAbsence"
         >
           Skicka ansökan
