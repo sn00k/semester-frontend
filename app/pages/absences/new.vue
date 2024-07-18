@@ -25,9 +25,10 @@ const absenceTypes: Ref<AbsenceType[] | undefined> = ref();
 const selectedCompanyId: Ref<string | null> = ref(null);
 const showAbsenceTypes = ref(false);
 const selectedAbsenceType = ref<null | string>(null);
-const startAt = ref('');
-const endAt = ref('');
-
+const absenceDates = ref({
+  startDate: '',
+  endDate: '',
+});
 const { data, error } = useQuery({
   queryKey: ['user'],
   queryFn: async (): Promise<User> => {
@@ -153,14 +154,15 @@ watchEffect(() => {
     </template>
 
     <template v-if="selectedAbsenceType">
-      <div class="py-4">
+      <div class="">
         <DatePicker
-          class="w-full"
-          v-model="startAt"
+          class="py-4 px-4 border-none"
+          v-model="absenceDates"
           as-single
           week-number
           use-range
           no-input
+          :shortcuts="false"
         ></DatePicker>
       </div>
     </template>
