@@ -185,7 +185,7 @@ function submitAbsence() {
     </template>
 
     <template v-if="selectedAbsenceType">
-      <div class="">
+      <div>
         <DatePicker
           class="py-4 px-4 border-none"
           v-model="absenceDates"
