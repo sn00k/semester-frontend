@@ -8,6 +8,7 @@ import {
   watch,
   onBeforeMount,
 } from 'vue';
+import DatePicker from 'vue-tailwind-datepicker';
 import Card from '~/components/Card.vue';
 import type { AbsenceType, User } from '~/types';
 
@@ -24,6 +25,8 @@ const absenceTypes: Ref<AbsenceType[] | undefined> = ref();
 const selectedCompanyId: Ref<string | null> = ref(null);
 const showAbsenceTypes = ref(false);
 const selectedAbsenceType = ref<null | string>(null);
+const startAt = ref('');
+const endAt = ref('');
 
 const { data, error } = useQuery({
   queryKey: ['user'],
@@ -147,6 +150,19 @@ watchEffect(() => {
           </div>
         </div>
       </Card>
+    </template>
+
+    <template v-if="selectedAbsenceType">
+      <div class="py-4">
+        <DatePicker
+          class="w-full"
+          v-model="startAt"
+          as-single
+          week-number
+          use-range
+          no-input
+        ></DatePicker>
+      </div>
     </template>
   </div>
 </template>

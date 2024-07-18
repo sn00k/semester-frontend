@@ -4,12 +4,13 @@ import colors from 'tailwindcss/colors';
 export default {
   darkMode: 'class',
   content: [
-    './components/**/*.{js,vue,ts}',
-    './layouts/**/*.vue',
-    './pages/**/*.vue',
-    './plugins/**/*.{js,ts}',
-    './app.vue',
+    './app/components/**/*.{js,vue,ts}',
+    './app/layouts/**/*.vue',
+    './app/pages/**/*.vue',
+    './app/plugins/**/*.{js,ts}',
+    './app/app.vue',
     './error.vue',
+    './node_modules/vue-tailwind-datepicker/**/*.js',
   ],
   theme: {
     extend: {
@@ -24,6 +25,8 @@ export default {
           dark: colors.amber[300],
           light: colors.blue[500],
         },
+      'vtd-primary': colors.sky, // Light mode Datepicker color
+      'vtd-secondary': colors.gray, // Dark mode Datepicker color
       },
     },
     fontFamily: {
