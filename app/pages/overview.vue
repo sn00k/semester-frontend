@@ -21,10 +21,14 @@ watchEffect(() => {
     selectedteamId.value = teams.value.data[0].id;
   }
 });
+
+function selectTeam(teamId: string) {
+  selectedteamId.value = teamId;
+}
 </script>
 <template>
   <div>
-    <header class="bg-white dark:bg-primary-dark p-4">
+    <header class="dark:bg-primary-dark p-4 lg:bg-primary-light bg-white">
       <Headline>
         <template #left>
           <img
@@ -39,8 +43,22 @@ watchEffect(() => {
           </NuxtLink>
         </template>
       </Headline>
-      <div v-for="team in teams.data" :key="team.id">
-        <span>{{ team.name }}</span>
+      <div class="flex justify-center">
+        <div
+          class="flex items-center justify-between w-3/4 rounded-full bg-primary-light"
+        >
+          <span
+            v-for="team in teams.data"
+            :key="team.id"
+            :class="{
+              'rounded-full bg-blue-500 text-white': team.id === selectedteamId,
+            }"
+            @click="selectTeam(team.id)"
+            class="px-4 py-2"
+          >
+            {{ team.name }}
+          </span>
+        </div>
       </div>
     </header>
   </div>
