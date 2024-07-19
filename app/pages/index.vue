@@ -194,7 +194,7 @@ function ensureCompanySelected(companyId: string) {
                     </DialogDescription>
                   </DialogHeader>
                   <AbsenceTypeSelector
-                    placeholder="Frånvarutyp"
+                    placeholder="Frånvarotyp"
                     :absence-types="absenceStore.absences ?? []"
                     :selected-absence-type="selectedAbsenceType"
                     :selected-type-id="selectedTypeId"

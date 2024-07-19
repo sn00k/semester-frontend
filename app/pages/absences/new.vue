@@ -122,7 +122,7 @@ function submitAbsence() {
     <!-- Absence type -->
     <template v-if="absenceStore.isCompanySelected">
       <AbsenceTypeSelector
-        placeholder="Frånvarutyp"
+        placeholder="Frånvarotyp"
         :absence-types="absenceStore.absences ?? []"
         :selected-absence-type="selectedAbsenceType"
         :selected-type-id="selectedTypeId"
