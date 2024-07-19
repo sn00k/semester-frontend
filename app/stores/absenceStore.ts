@@ -14,6 +14,18 @@ type AbsenceForm = {
   action: 'create' | 'update';
 };
 
+type AbsenceDates = {
+  startDate: string;
+  endDate: string;
+};
+
+type AbsenceForm = {
+  absenceId?: string;
+  absenceDates: AbsenceDates;
+  selectedTypeId: string;
+  action: 'create' | 'update';
+};
+
 export const useAbsenceStore = defineStore('absenceStore', () => {
   const absences = ref<AbsenceType[] | null>(null);
   const selectedCompanyId = ref<string | null>(null);

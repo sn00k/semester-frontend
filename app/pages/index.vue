@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query';
 import { Button } from '~/components/button';
+import DatePicker from 'vue-tailwind-datepicker';
 import {
   Accordion,
   AccordionContent,
@@ -17,8 +18,10 @@ import {
   DialogTrigger,
 } from '@/components/dialog';
 import { AbsenceTypeSelector } from '~/components/select';
-import { useAbsenceStore } from '~/stores/absenceStore';
+import { useAbsenceStore, useAuthStore } from '~/stores';
+import { useSubmitAbsence } from '~/composables';
 import type { Absences } from '~/types';
+import { ref, watch } from 'vue';
 
 useState('pageTitle', () => 'Min Sida');
 definePageMeta({
@@ -26,14 +29,20 @@ definePageMeta({
   title: 'Min Sida',
 });
 
-const isCollapsed = ref('');
 const absenceStore = useAbsenceStore();
 const selectedAbsenceType = ref<string>('');
 const selectedTypeId = ref<string>('');
 const API_URL = useRuntimeConfig().public.apiUrl;
+const absenceDates = ref({
+  startDate: '',
+  endDate: '',
+});
+
+const { submitAbsence, submitError, submitSuccess, isSubmitting } =
+  useSubmitAbsence();
 
 const fetcher = async (): Promise<Absences> =>
-  await fetch(`${API_URL}/absences`, {
+  await fetch(`${API_URL}/absences?user_id=${useAuthStore().user.id}`, {
     headers: {
       Authorization: `Bearer ${useCookie('token').value}`,
       Accept: 'application/json',
@@ -52,6 +61,8 @@ const {
   queryFn: fetcher,
 });
 
+const expandedItemId = ref<string | null>(null);
+
 function dateFormat(date: string) {
   return new Date(date).toLocaleDateString('sv-SE', {
     year: 'numeric',
@@ -65,6 +76,15 @@ function ensureCompanySelected(companyId: string) {
     absenceStore.setSelectedCompanyId(companyId);
   }
 }
+
+watch(submitSuccess, (newValue) => {
+  if (newValue) {
+    // Handle successful absence submission
+    absenceDates.value = { startDate: '', endDate: '' };
+    selectedAbsenceType.value = '';
+    selectedTypeId.value = '';
+  }
+});
 </script>
 
 <template>
@@ -81,12 +101,7 @@ function ensureCompanySelected(companyId: string) {
     </template>
   </Headline>
   <div class="flex flex-col p-4 lg:py-0">
-    <Accordion
-      type="single"
-      collapsible
-      class="w-full flex flex-col gap-y-4"
-      v-model="isCollapsed"
-    >
+    <Accordion type="single" collapsible class="w-full flex flex-col gap-y-4">
       <AccordionItem
         v-for="absence in absences?.data"
         :key="absence.id"
@@ -94,7 +109,7 @@ function ensureCompanySelected(companyId: string) {
       >
         <div
           class="flex bg-white text-black dark:text-white dark:bg-[#1F1F1F] gap-x-4 mt-4 items-center w-full p-2 rounded-md"
-          :class="{ 'rounded-b-none': isCollapsed }"
+          :class="{ 'rounded-b-none': expandedItemId === absence.id }"
         >
           <div
             class="inline-block bg-gray-300 size-10 rounded-full ring-2 ring-white"
@@ -127,29 +142,33 @@ function ensureCompanySelected(companyId: string) {
               <span v-else>Ej Behandlad</span>
             </div>
           </div>
-          <AccordionTrigger class="accordion-trigger">
+          <AccordionTrigger
+            class="accordion-trigger"
+            @click="
+              expandedItemId = expandedItemId === absence.id ? null : absence.id
+            "
+          >
             <template #icon>
-              <span class="material-icons accordion-chevron">expand_more</span>
+              <span
+                class="material-icons accordion-chevron"
+                :class="{ 'rotate-180': expandedItemId === absence.id }"
+              >
+                expand_more
+              </span>
             </template>
           </AccordionTrigger>
         </div>
-        <Transition
-          class="transition-all duration-500 overflow-hidden"
-          enter-from-class="transform scale-95 opacity-0 max-h-0"
-          enter-to-class="transform scale-100 opacity-100 max-h-[1000px]"
-          leave-from-class="transform scale-100 opacity-100 max-h-[1000px]"
-          leave-to-class="transform scale-95 opacity-0 max-h-0"
-        >
+        <Transition name="accordion" mode="out-in">
           <div
+            v-if="expandedItemId === absence.id"
             class="flex bg-white text-black dark:text-white dark:bg-[#1F1F1F] items-center w-full p-2 rounded-md"
-            :class="{ 'rounded-t-none': isCollapsed }"
-            v-if="isCollapsed"
+            :class="{ 'rounded-t-none': expandedItemId === absence.id }"
           >
-            <AccordionContent class="accordion-content flex w-full">
+            <AccordionContent class="accordion-content flex w-full p-2">
               <Dialog>
                 <DialogTrigger as-child>
                   <Button
-                    class="flex-1 mx-2 bg-white ring-2 rounded-xl ring-accent-light text-accent-light"
+                    class="flex-1 mx-2 bg-white ring-2 rounded-xl ring-accent-light text-accent-light dark:bg-zinc-800 dark:text-yellow-400 dark:ring-0"
                   >
                     <span class="material-icons">delete_forever</span>
                     <span>Radera</span>
@@ -177,7 +196,7 @@ function ensureCompanySelected(companyId: string) {
               <Dialog>
                 <DialogTrigger as-child>
                   <Button
-                    class="flex-1 mx-2 ring-2 rounded-xl ring-accent-light bg-accent-light text-white"
+                    class="flex-1 mx-2 ring-2 rounded-xl ring-accent-light bg-accent-light dark:bg-yellow-400 dark:text-black dark:ring-0 text-white"
                     @click="ensureCompanySelected(absence.company_id)"
                   >
                     <span class="material-icons">edit</span>
@@ -188,8 +207,7 @@ function ensureCompanySelected(companyId: string) {
                   <DialogHeader>
                     <DialogTitle>Ändra Frånvaro</DialogTitle>
                     <DialogDescription>
-                      Här har vi frånvarotyp dropdown och en kalender för att
-                      välja
+                      Vänligen välj en ny frånvarotyp och datum för frånvaron
                     </DialogDescription>
                   </DialogHeader>
                   <AbsenceTypeSelector
@@ -202,6 +220,51 @@ function ensureCompanySelected(companyId: string) {
                     "
                     @update:selectedTypeId="(value) => (selectedTypeId = value)"
                   />
+
+                  <template v-if="selectedAbsenceType">
+                    <div>
+                      <DatePicker
+                        class="py-4 px-4 border-none"
+                        v-model="absenceDates"
+                        as-single
+                        week-number
+                        use-range
+                        no-input
+                        :shortcuts="false"
+                      />
+                    </div>
+                  </template>
+
+                  <template
+                    v-if="
+                      selectedAbsenceType &&
+                      absenceDates.startDate &&
+                      absenceStore.isCompanySelected
+                    "
+                  >
+                    <div class="flex justify-center items-center py-8">
+                      <button
+                        class="dark:bg-accent-dark bg-accent-light text-white dark:text-black rounded-lg w-40 px-2 py-2"
+                        @click="
+                          submitAbsence({
+                            absenceId: absence.id,
+                            absenceDates: absenceDates,
+                            selectedTypeId: selectedTypeId,
+                            action: 'update',
+                          })
+                        "
+                      >
+                        Skicka ansökan
+                      </button>
+                    </div>
+                  </template>
+
+                  <template v-if="isSubmitting">
+                    <p>Submitting...</p>
+                  </template>
+                  <template v-if="submitError">
+                    <p>Error: {{ submitError.message }}</p>
+                  </template>
                 </DialogContent>
               </Dialog>
             </AccordionContent>
@@ -222,5 +285,24 @@ function ensureCompanySelected(companyId: string) {
 }
 .accordion-trigger[data-state='open'] > .accordion-chevron {
   transform: rotate(180deg);
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+.accordion-enter-active,
+.accordion-leave-active {
+  transition: all 0.3s ease;
+}
+.accordion-enter-from,
+.accordion-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+.accordion-enter-to,
+.accordion-leave-from {
+  max-height: 1000px;
+  opacity: 1;
 }
 </style>

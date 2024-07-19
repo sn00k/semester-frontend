@@ -22,7 +22,7 @@ import { Menu } from '@/components/menu';
   >
     <div class="flex flex-col grow min-h-full h-auto">
       <!-- Content area-->
-      <div class="grow bg-zinc-100 dark:bg-[#141414]">
+      <div class="grow bg-zinc-100 pb-24 dark:bg-[#141414]">
         <NuxtPage />
       </div>
     </div>
