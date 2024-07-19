@@ -83,3 +83,9 @@ input[type='radio'],
 input[type='checkbox'] {
   cursor: pointer;
 }
+
+@layer base {
+  #__nuxt {
+    @apply w-full h-screen flex flex-col;
+  }
+}
