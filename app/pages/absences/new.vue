@@ -5,8 +5,7 @@ import { Card } from '~/components/card';
 import { AbsenceTypeSelector } from '~/components/select';
 import { useAuthStore } from '~/stores/authStore';
 import { useAbsenceStore } from '~/stores/absenceStore';
-import { useSubmitAbsence } from '~/composables';
-import type { User } from '~/types';
+import type { AbsenceType, User } from '~/types';
 
 useState('pageTitle', () => 'Ny Frånvaro');
 definePageMeta({
@@ -19,9 +18,6 @@ const API_URL = useRuntimeConfig().public.apiUrl;
 const user: Ref<User | null> = ref(null);
 const selectedAbsenceType = ref<string>('');
 const selectedTypeId = ref<string>('');
-const absenceStore = useAbsenceStore();
-const { isSubmitting, submitSuccess, submitError, submitAbsence } =
-  useSubmitAbsence();
 const absenceDates = ref({
   startDate: '',
   endDate: '',
@@ -40,11 +36,15 @@ const { data, error } = useQuery({
   },
 });
 
+const absenceStore = useAbsenceStore();
+
 function handleCompanyChange(companyId: string) {
   absenceStore.setSelectedCompanyId(companyId);
   selectedAbsenceType.value = '';
   selectedTypeId.value = '';
-  absenceStore.fetchAbsenceTypes(companyId);
+  if (!absenceStore.absences) {
+    absenceStore.fetchAbsences(companyId);
+  }
 }
 
 watchEffect(() => {
@@ -56,14 +56,21 @@ watchEffect(() => {
   }
 });
 
-watch(submitSuccess, (newValue) => {
-  if (newValue) {
-    // Handle successful submission
-    absenceDates.value = { startDate: '', endDate: '' };
-    selectedAbsenceType.value = '';
-    selectedTypeId.value = '';
-  }
-});
+function submitAbsence() {
+  useFetch(`${API_URL}/absences`, {
+    method: 'POST',
+    body: {
+      company_id: absenceStore.selectedCompanyId,
+      type_id: selectedTypeId.value,
+      start_at: absenceDates.value.startDate,
+      end_at: absenceDates.value.endDate,
+      user_id: useAuthStore().user.id,
+    },
+    headers: {
+      Authorization: `Bearer ${useCookie('token').value}`,
+    },
+  });
+}
 </script>
 
 <template>

@@ -7,23 +7,30 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/accordion';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/dialog';
+import { AbsenceTypeSelector } from '~/components/select';
+import { useAbsenceStore } from '~/stores/absenceStore';
 import type { Absences } from '~/types';
 
+useState('pageTitle', () => 'Min Sida');
 definePageMeta({
   middleware: 'auth',
   title: 'Min Sida',
 });
 
 const isCollapsed = ref('');
-
+const absenceStore = useAbsenceStore();
+const selectedAbsenceType = ref<string>('');
+const selectedTypeId = ref<string>('');
 const API_URL = useRuntimeConfig().public.apiUrl;
-const absenceDates = ref({
-  startDate: '',
-  endDate: '',
-});
-
-const { submitAbsence, submitError, submitSuccess, isSubmitting } =
-  useSubmitAbsence();
 
 const fetcher = async (): Promise<Absences> =>
   await fetch(`${API_URL}/absences`, {
@@ -32,6 +39,7 @@ const fetcher = async (): Promise<Absences> =>
       Accept: 'application/json',
     },
   }).then((response) => response.json());
+
 const {
   isPending,
   isError,
@@ -52,9 +60,11 @@ function dateFormat(date: string) {
   });
 }
 
-watchEffect(() => {
-  console.log('collapsed: ', isCollapsed.value);
-});
+function ensureCompanySelected(companyId: string) {
+  if (!absenceStore.selectedCompanyId) {
+    absenceStore.setSelectedCompanyId(companyId);
+  }
+}
 </script>
 
 <template>
@@ -67,9 +77,7 @@ watchEffect(() => {
       />
     </template>
     <template #right>
-      <NuxtLink to="/notifications">
-        <span class="material-icons lg:hidden">notifications</span>
-      </NuxtLink>
+      <span class="material-icons lg:hidden">notifications</span>
     </template>
   </Headline>
   <div class="flex flex-col p-4 lg:py-0">
@@ -138,18 +146,64 @@ watchEffect(() => {
             v-if="isCollapsed"
           >
             <AccordionContent class="accordion-content flex w-full">
-              <Button
-                class="flex-1 mx-2 bg-white ring-2 rounded-xl ring-accent-light text-accent-light"
-              >
-                <span class="material-icons">delete_forever</span>
-                <span>Radera</span>
-              </Button>
-              <Button
-                class="flex-1 mx-2 ring-2 rounded-xl ring-accent-light bg-accent-light text-white"
-              >
-                <span class="material-icons">edit</span>
-                <span>Ändra</span>
-              </Button>
+              <Dialog>
+                <DialogTrigger as-child>
+                  <Button
+                    class="flex-1 mx-2 bg-white ring-2 rounded-xl ring-accent-light text-accent-light"
+                  >
+                    <span class="material-icons">delete_forever</span>
+                    <span>Radera</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent class="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Radera Frånvaro</DialogTitle>
+                    <DialogDescription>
+                      Är du säker på att du vill radera frånvaro
+                      <strong>{{ absence.absence_type }}</strong> för perioden
+                      {{ dateFormat(absence.start_at) }} -
+                      {{ dateFormat(absence.end_at) }}?
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter
+                    class="gap-y-4 sm:flex-row-reverse sm:justify-start"
+                  >
+                    <Button variant="secondary"> Avbryt </Button>
+                    <Button variant="secondary"> Bekräfta </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog>
+                <DialogTrigger as-child>
+                  <Button
+                    class="flex-1 mx-2 ring-2 rounded-xl ring-accent-light bg-accent-light text-white"
+                    @click="ensureCompanySelected(absence.company_id)"
+                  >
+                    <span class="material-icons">edit</span>
+                    <span>Ändra</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent class="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Ändra Frånvaro</DialogTitle>
+                    <DialogDescription>
+                      Här har vi frånvarotyp dropdown och en kalender för att
+                      välja
+                    </DialogDescription>
+                  </DialogHeader>
+                  <AbsenceTypeSelector
+                    placeholder="Frånvarotyp"
+                    :absence-types="absenceStore.absences ?? []"
+                    :selected-absence-type="selectedAbsenceType"
+                    :selected-type-id="selectedTypeId"
+                    @update:selectedAbsenceType="
+                      (value) => (selectedAbsenceType = value)
+                    "
+                    @update:selectedTypeId="(value) => (selectedTypeId = value)"
+                  />
+                </DialogContent>
+              </Dialog>
             </AccordionContent>
           </div>
         </Transition>
