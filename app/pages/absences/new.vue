@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query';
-import { type Ref, computed, ref } from 'vue';
 import DatePicker from 'vue-tailwind-datepicker';
 import { Card } from '~/components/card';
+import { AbsenceTypeSelector } from '~/components/select';
 import { useAuthStore } from '~/stores/authStore';
 import type { AbsenceType, User } from '~/types';
 
@@ -17,9 +17,8 @@ const API_URL = useRuntimeConfig().public.apiUrl;
 const user: Ref<User | null> = ref(null);
 const absenceTypes: Ref<AbsenceType[] | undefined> = ref();
 const selectedCompanyId: Ref<string | null> = ref(null);
-const showAbsenceTypes = ref(false);
-const selectedAbsenceType = ref<null | string>(null);
-const selectedTypeId = ref<null | string>(null);
+const selectedAbsenceType = ref<string>('');
+const selectedTypeId = ref<string>('');
 const absenceDates = ref({
   startDate: '',
   endDate: '',
@@ -63,12 +62,9 @@ const {
 
 function handleCompanyChange(companyId: string) {
   selectedCompanyId.value = companyId;
+  selectedAbsenceType.value = '';
+  selectedTypeId.value = '';
   refetchAbsenceTypes();
-}
-
-function selectAbsenceType(absenceType: AbsenceType) {
-  selectedAbsenceType.value = absenceType.name;
-  selectedTypeId.value = absenceType.id;
 }
 
 watchEffect(() => {
@@ -97,6 +93,7 @@ function submitAbsence() {
   });
 }
 </script>
+
 <template>
   <div class="flex flex-col p-4">
     <!-- Company -->
@@ -145,40 +142,14 @@ function submitAbsence() {
 
     <!-- Absence type -->
     <template v-if="selectedCompanyId">
-      <h2 class="pl-2 pt-4">Typ av frånvaro</h2>
-      <Card class="py-0">
-        <div
-          class="flex py-3 px-2 justify-between cursor-pointer"
-          @click="showAbsenceTypes = !showAbsenceTypes"
-        >
-          <h2>{{ selectedAbsenceType ?? 'Frånvarotyp' }}</h2>
-          <span class="material-icons">
-            {{ showAbsenceTypes ? 'expand_less' : 'expand_more' }}
-          </span>
-        </div>
-        <div v-show="showAbsenceTypes" class="flex flex-col">
-          <div
-            v-for="absenceType in absenceTypes"
-            :key="absenceType.id"
-            class="flex p-3 gap-x-3 items-center"
-          >
-            <input
-              :class="[
-                'dark:checked:ring-accent-dark dark:focus:checked:ring-offset-accent-dark dark:focus:checked:ring-accent-dark dark:focus:ring-white dark:focus:ring-offset-white radio-button dark:focus:border-accent-dark dark:checked:ring-offset-accent-dark dark:hover:border-accent-dark ring-2 dark:border-accent-dark dark:checked:after:bg-accent-dark dark:bg-neutral-900 bg-white dark:ring-white dark:checked:bg-transparent',
-                'checked:focus:ring-offset-transparent focus:ring-offset-black checked:bg-white checked:ring-offset-accent-light focus:ring-black checked:focus:ring-accent-light ring-offset-black dark:ring-offset-white text-accent-light border-0 ring-offset-2 focus:checked:bg-white focus:border-accent-light hover:border-black hover:checked:bg-white checked:ring-accent-light border-black checked:after:bg-accent-light ring-black',
-              ]"
-              type="radio"
-              :id="absenceType.id"
-              :value="absenceType.id"
-              name="absenceType"
-              @change="selectAbsenceType(absenceType)"
-            />
-            <label class="cursor-pointer" :for="absenceType.id">{{
-              absenceType.name
-            }}</label>
-          </div>
-        </div>
-      </Card>
+      <AbsenceTypeSelector
+        placeholder="Frånvarutyp"
+        :absence-types="absenceTypes ?? []"
+        :selected-absence-type="selectedAbsenceType"
+        :selected-type-id="selectedTypeId"
+        @update:selectedAbsenceType="(value) => (selectedAbsenceType = value)"
+        @update:selectedTypeId="(value) => (selectedTypeId = value)"
+      />
     </template>
 
     <template v-if="selectedAbsenceType">
