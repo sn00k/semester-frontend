@@ -27,8 +27,11 @@ definePageMeta({
 });
 
 const isCollapsed = ref('');
-
+const absenceStore = useAbsenceStore();
+const selectedAbsenceType = ref<string>('');
+const selectedTypeId = ref<string>('');
 const API_URL = useRuntimeConfig().public.apiUrl;
+
 const fetcher = async (): Promise<Absences> =>
   await fetch(`${API_URL}/absences`, {
     headers: {
@@ -56,10 +59,6 @@ function dateFormat(date: string) {
     day: '2-digit',
   });
 }
-
-const absenceStore = useAbsenceStore();
-const selectedAbsenceType = ref<string>('');
-const selectedTypeId = ref<string>('');
 
 function ensureCompanySelected(companyId: string) {
   if (!absenceStore.selectedCompanyId) {
@@ -212,16 +211,3 @@ function ensureCompanySelected(companyId: string) {
     </Accordion>
   </div>
 </template>
-
-<style scoped>
-.accordion-content[data-state='open'] {
-  padding-top: 16px;
-}
-
-.accordion-chevron {
-  transition: transform 300ms;
-}
-.accordion-trigger[data-state='open'] > .accordion-chevron {
-  transform: rotate(180deg);
-}
-</style>
