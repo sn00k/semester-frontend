@@ -1,23 +1,45 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query';
-import { Card } from '~/components/card';
+import { Button } from '~/components/button';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/accordion';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/dialog';
+import { AbsenceTypeSelector } from '~/components/select';
+import { useAbsenceStore } from '~/stores/absenceStore';
 import type { Absences } from '~/types';
-import { useAuthStore } from '~/stores/authStore';
 
+useState('pageTitle', () => 'Min Sida');
 definePageMeta({
   middleware: 'auth',
   title: 'Min Sida',
 });
 
-const authStore = useAuthStore();
+const isCollapsed = ref('');
+const absenceStore = useAbsenceStore();
+const selectedAbsenceType = ref<string>('');
+const selectedTypeId = ref<string>('');
 const API_URL = useRuntimeConfig().public.apiUrl;
+
 const fetcher = async (): Promise<Absences> =>
-  await fetch(`${API_URL}/absences?user_id=${authStore.user.id}`, {
+  await fetch(`${API_URL}/absences`, {
     headers: {
       Authorization: `Bearer ${useCookie('token').value}`,
       Accept: 'application/json',
     },
   }).then((response) => response.json());
+
 const {
   isPending,
   isError,
@@ -29,12 +51,19 @@ const {
   queryKey: ['absences'],
   queryFn: fetcher,
 });
+
 function dateFormat(date: string) {
   return new Date(date).toLocaleDateString('sv-SE', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
   });
+}
+
+function ensureCompanySelected(companyId: string) {
+  if (!absenceStore.selectedCompanyId) {
+    absenceStore.setSelectedCompanyId(companyId);
+  }
 }
 </script>
 
@@ -48,49 +77,137 @@ function dateFormat(date: string) {
       />
     </template>
     <template #right>
-      <NuxtLink to="/notifications">
-        <span class="material-icons lg:hidden">notifications</span>
-      </NuxtLink>
+      <span class="material-icons lg:hidden">notifications</span>
     </template>
   </Headline>
   <div class="flex flex-col p-4 lg:py-0">
-    <div
-      class="flex bg-white text-black dark:text-white dark:bg-[#1F1F1F] gap-x-4 mt-4 items-center w-full p-2 rounded-md"
-      v-for="absence in absences?.data"
-      :key="absence.id"
+    <Accordion
+      type="single"
+      collapsible
+      class="w-full flex flex-col gap-y-4"
+      v-model="isCollapsed"
     >
-      <div
-        class="inline-block bg-gray-300 size-10 rounded-full ring-2 ring-white"
-      ></div>
-      <div class="flex flex-col grow">
-        <div class="font-semibold">
-          <span v-text="absence.absence_type"></span>
-        </div>
-        <div>
-          <span class="text-sm"
-            >{{ dateFormat(absence.start_at) }} -
-            {{ dateFormat(absence.end_at) }}</span
-          >
-        </div>
-      </div>
-      <div>
+      <AccordionItem
+        v-for="absence in absences?.data"
+        :key="absence.id"
+        :value="absence.id"
+      >
         <div
-          class="flex items-center gap-x-2 rounded-md border border-gray-400 px-2 py-1"
+          class="flex bg-white text-black dark:text-white dark:bg-[#1F1F1F] gap-x-4 mt-4 items-center w-full p-2 rounded-md"
+          :class="{ 'rounded-b-none': isCollapsed }"
         >
-          <span
-            class="block size-2 rounded-full bg-green-500"
-            :class="[
-              { 'bg-green-500': absence.approved },
-              { 'bg-red-500': !absence.approved },
-              { 'bg-orange-500': absence.approved === null },
-            ]"
-          ></span>
-          <span v-if="absence.approved">Godkänd</span>
-          <span v-else-if="absence.approved === false">Ej Godkänd</span>
-          <span v-else>Ej Behandlad</span>
+          <div
+            class="inline-block bg-gray-300 size-10 rounded-full ring-2 ring-white"
+          ></div>
+          <div class="flex flex-col grow">
+            <div class="font-semibold">
+              <span v-text="absence.absence_type"></span>
+            </div>
+            <div>
+              <span class="text-sm"
+                >{{ dateFormat(absence.start_at) }} -
+                {{ dateFormat(absence.end_at) }}</span
+              >
+            </div>
+          </div>
+          <div class="bg-gray-100 dark:text-white dark:bg-zinc-800">
+            <div
+              class="flex items-center gap-x-2 rounded-md border border-gray-400 px-2 py-1"
+            >
+              <span
+                class="block size-2 rounded-full bg-green-500"
+                :class="[
+                  { 'bg-green-500': absence.approved },
+                  { 'bg-red-500': !absence.approved },
+                  { 'bg-orange-500': absence.approved === null },
+                ]"
+              ></span>
+              <span v-if="absence.approved">Godkänd</span>
+              <span v-else-if="absence.approved === false">Ej Godkänd</span>
+              <span v-else>Ej Behandlad</span>
+            </div>
+          </div>
+          <AccordionTrigger class="accordion-trigger">
+            <template #icon>
+              <span class="material-icons accordion-chevron">expand_more</span>
+            </template>
+          </AccordionTrigger>
         </div>
-      </div>
-      <div></div>
-    </div>
+        <Transition
+          class="transition-all duration-500 overflow-hidden"
+          enter-from-class="transform scale-95 opacity-0 max-h-0"
+          enter-to-class="transform scale-100 opacity-100 max-h-[1000px]"
+          leave-from-class="transform scale-100 opacity-100 max-h-[1000px]"
+          leave-to-class="transform scale-95 opacity-0 max-h-0"
+        >
+          <div
+            class="flex bg-white text-black dark:text-white dark:bg-[#1F1F1F] items-center w-full p-2 rounded-md"
+            :class="{ 'rounded-t-none': isCollapsed }"
+            v-if="isCollapsed"
+          >
+            <AccordionContent class="accordion-content flex w-full">
+              <Dialog>
+                <DialogTrigger as-child>
+                  <Button
+                    class="flex-1 mx-2 bg-white ring-2 rounded-xl ring-accent-light text-accent-light"
+                  >
+                    <span class="material-icons">delete_forever</span>
+                    <span>Radera</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent class="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Radera Frånvaro</DialogTitle>
+                    <DialogDescription>
+                      Är du säker på att du vill radera frånvaro
+                      <strong>{{ absence.absence_type }}</strong> för perioden
+                      {{ dateFormat(absence.start_at) }} -
+                      {{ dateFormat(absence.end_at) }}?
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter
+                    class="gap-y-4 sm:flex-row-reverse sm:justify-start"
+                  >
+                    <Button variant="secondary"> Avbryt </Button>
+                    <Button variant="secondary"> Bekräfta </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog>
+                <DialogTrigger as-child>
+                  <Button
+                    class="flex-1 mx-2 ring-2 rounded-xl ring-accent-light bg-accent-light text-white"
+                    @click="ensureCompanySelected(absence.company_id)"
+                  >
+                    <span class="material-icons">edit</span>
+                    <span>Ändra</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent class="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Ändra Frånvaro</DialogTitle>
+                    <DialogDescription>
+                      Här har vi frånvarotyp dropdown och en kalender för att
+                      välja
+                    </DialogDescription>
+                  </DialogHeader>
+                  <AbsenceTypeSelector
+                    placeholder="Frånvarotyp"
+                    :absence-types="absenceStore.absences ?? []"
+                    :selected-absence-type="selectedAbsenceType"
+                    :selected-type-id="selectedTypeId"
+                    @update:selectedAbsenceType="
+                      (value) => (selectedAbsenceType = value)
+                    "
+                    @update:selectedTypeId="(value) => (selectedTypeId = value)"
+                  />
+                </DialogContent>
+              </Dialog>
+            </AccordionContent>
+          </div>
+        </Transition>
+      </AccordionItem>
+    </Accordion>
   </div>
 </template>
