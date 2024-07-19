@@ -187,7 +187,8 @@ function submitAbsence() {
     <template v-if="selectedAbsenceType">
       <div>
         <DatePicker
-          class="py-4 px-4 border-none"
+          class="py-4 px-4 border-none w-full"
+          input-classes="w-full"
           v-model="absenceDates"
           as-single
           week-number

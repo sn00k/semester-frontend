@@ -1,31 +1,23 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query';
-import { Button } from '~/components/button';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/accordion';
+import { Card } from '~/components/card';
 import type { Absences } from '~/types';
+import { useAuthStore } from '~/stores/authStore';
 
-useState('pageTitle', () => 'Min Sida');
 definePageMeta({
   middleware: 'auth',
   title: 'Min Sida',
 });
 
-const isCollapsed = ref('');
-
+const authStore = useAuthStore();
 const API_URL = useRuntimeConfig().public.apiUrl;
 const fetcher = async (): Promise<Absences> =>
-  await fetch(`${API_URL}/absences`, {
+  await fetch(`${API_URL}/absences?user_id=${authStore.user.id}`, {
     headers: {
       Authorization: `Bearer ${useCookie('token').value}`,
       Accept: 'application/json',
     },
   }).then((response) => response.json());
-
 const {
   isPending,
   isError,
@@ -37,7 +29,6 @@ const {
   queryKey: ['absences'],
   queryFn: fetcher,
 });
-
 function dateFormat(date: string) {
   return new Date(date).toLocaleDateString('sv-SE', {
     year: 'numeric',
@@ -45,10 +36,6 @@ function dateFormat(date: string) {
     day: '2-digit',
   });
 }
-
-watchEffect(() => {
-  console.log('collapsed: ', isCollapsed.value);
-});
 </script>
 
 <template>
@@ -61,104 +48,49 @@ watchEffect(() => {
       />
     </template>
     <template #right>
-      <span class="material-icons lg:hidden">notifications</span>
+      <NuxtLink to="/notifications">
+        <span class="material-icons lg:hidden">notifications</span>
+      </NuxtLink>
     </template>
   </Headline>
   <div class="flex flex-col p-4 lg:py-0">
-    <Accordion
-      type="single"
-      collapsible
-      class="w-full flex flex-col gap-y-4"
-      v-model="isCollapsed"
+    <div
+      class="flex bg-white text-black dark:text-white dark:bg-[#1F1F1F] gap-x-4 mt-4 items-center w-full p-2 rounded-md"
+      v-for="absence in absences?.data"
+      :key="absence.id"
     >
-      <AccordionItem
-        v-for="absence in absences?.data"
-        :key="absence.id"
-        :value="absence.id"
-      >
-        <div
-          class="flex bg-white text-black dark:text-white dark:bg-[#1F1F1F] gap-x-4 mt-4 items-center w-full p-2 rounded-md"
-          :class="{ 'rounded-b-none': isCollapsed }"
-        >
-          <div
-            class="inline-block bg-gray-300 size-10 rounded-full ring-2 ring-white"
-          ></div>
-          <div class="flex flex-col grow">
-            <div class="font-semibold">
-              <span v-text="absence.absence_type"></span>
-            </div>
-            <div>
-              <span class="text-sm"
-                >{{ dateFormat(absence.start_at) }} -
-                {{ dateFormat(absence.end_at) }}</span
-              >
-            </div>
-          </div>
-          <div class="bg-gray-100 dark:text-white dark:bg-zinc-800">
-            <div
-              class="flex items-center gap-x-2 rounded-md border border-gray-400 px-2 py-1"
-            >
-              <span
-                class="block size-2 rounded-full bg-green-500"
-                :class="[
-                  { 'bg-green-500': absence.approved },
-                  { 'bg-red-500': !absence.approved },
-                  { 'bg-orange-500': absence.approved === null },
-                ]"
-              ></span>
-              <span v-if="absence.approved">Godkänd</span>
-              <span v-else-if="absence.approved === false">Ej Godkänd</span>
-              <span v-else>Ej Behandlad</span>
-            </div>
-          </div>
-          <AccordionTrigger class="accordion-trigger">
-            <template #icon>
-              <span class="material-icons accordion-chevron">expand_more</span>
-            </template>
-          </AccordionTrigger>
+      <div
+        class="inline-block bg-gray-300 size-10 rounded-full ring-2 ring-white"
+      ></div>
+      <div class="flex flex-col grow">
+        <div class="font-semibold">
+          <span v-text="absence.absence_type"></span>
         </div>
-        <Transition
-          class="transition-all duration-500 overflow-hidden"
-          enter-from-class="transform scale-95 opacity-0 max-h-0"
-          enter-to-class="transform scale-100 opacity-100 max-h-[1000px]"
-          leave-from-class="transform scale-100 opacity-100 max-h-[1000px]"
-          leave-to-class="transform scale-95 opacity-0 max-h-0"
-        >
-          <div
-            class="flex bg-white text-black dark:text-white dark:bg-[#1F1F1F] items-center w-full p-2 rounded-md"
-            :class="{ 'rounded-t-none': isCollapsed }"
-            v-if="isCollapsed"
+        <div>
+          <span class="text-sm"
+            >{{ dateFormat(absence.start_at) }} -
+            {{ dateFormat(absence.end_at) }}</span
           >
-            <AccordionContent class="accordion-content flex w-full">
-              <Button
-                class="flex-1 mx-2 bg-white ring-2 rounded-xl ring-accent-light text-accent-light"
-              >
-                <span class="material-icons">delete_forever</span>
-                <span>Radera</span>
-              </Button>
-              <Button
-                class="flex-1 mx-2 ring-2 rounded-xl ring-accent-light bg-accent-light text-white"
-              >
-                <span class="material-icons">edit</span>
-                <span>Ändra</span>
-              </Button>
-            </AccordionContent>
-          </div>
-        </Transition>
-      </AccordionItem>
-    </Accordion>
+        </div>
+      </div>
+      <div>
+        <div
+          class="flex items-center gap-x-2 rounded-md border border-gray-400 px-2 py-1"
+        >
+          <span
+            class="block size-2 rounded-full bg-green-500"
+            :class="[
+              { 'bg-green-500': absence.approved },
+              { 'bg-red-500': !absence.approved },
+              { 'bg-orange-500': absence.approved === null },
+            ]"
+          ></span>
+          <span v-if="absence.approved">Godkänd</span>
+          <span v-else-if="absence.approved === false">Ej Godkänd</span>
+          <span v-else>Ej Behandlad</span>
+        </div>
+      </div>
+      <div></div>
+    </div>
   </div>
 </template>
-
-<style scoped>
-.accordion-content[data-state='open'] {
-  padding-top: 16px;
-}
-
-.accordion-chevron {
-  transition: transform 300ms;
-}
-.accordion-trigger[data-state='open'] > .accordion-chevron {
-  transform: rotate(180deg);
-}
-</style>
