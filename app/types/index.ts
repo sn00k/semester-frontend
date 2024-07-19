@@ -10,6 +10,7 @@ export type Invitation = {
 
 export type Absence = {
   id: string;
+  company_type: string;
   start_at: string;
   end_at: string;
   approved: boolean | null;

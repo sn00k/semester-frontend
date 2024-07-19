@@ -4,6 +4,7 @@ import DatePicker from 'vue-tailwind-datepicker';
 import { Card } from '~/components/card';
 import { AbsenceTypeSelector } from '~/components/select';
 import { useAuthStore } from '~/stores/authStore';
+import { useAbsenceStore } from '~/stores/absenceStore';
 import type { AbsenceType, User } from '~/types';
 
 useState('pageTitle', () => 'Ny Frånvaro');
@@ -15,8 +16,6 @@ definePageMeta({
 const API_URL = useRuntimeConfig().public.apiUrl;
 
 const user: Ref<User | null> = ref(null);
-const absenceTypes: Ref<AbsenceType[] | undefined> = ref();
-const selectedCompanyId: Ref<string | null> = ref(null);
 const selectedAbsenceType = ref<string>('');
 const selectedTypeId = ref<string>('');
 const absenceDates = ref({
@@ -37,34 +36,15 @@ const { data, error } = useQuery({
   },
 });
 
-const {
-  data: absenceTypesData,
-  error: absenceTypesError,
-  refetch: refetchAbsenceTypes,
-} = useQuery({
-  queryKey: ['absenceTypes'],
-  queryFn: async (): Promise<AbsenceType[]> => {
-    const response = await fetch(
-      `${API_URL}/companies/${selectedCompanyId.value}/absence-types`,
-      {
-        headers: {
-          Authorization: `Bearer ${useCookie('token').value}`,
-          Accept: 'application/json',
-        },
-      },
-    );
-    const json = await response.json();
-
-    return json.data as AbsenceType[];
-  },
-  enabled: computed(() => !!selectedCompanyId.value),
-});
+const absenceStore = useAbsenceStore();
 
 function handleCompanyChange(companyId: string) {
-  selectedCompanyId.value = companyId;
+  absenceStore.setSelectedCompanyId(companyId);
   selectedAbsenceType.value = '';
   selectedTypeId.value = '';
-  refetchAbsenceTypes();
+  if (!absenceStore.absences) {
+    absenceStore.fetchAbsences(companyId);
+  }
 }
 
 watchEffect(() => {
@@ -73,7 +53,6 @@ watchEffect(() => {
   }
   if (data.value) {
     user.value = data.value;
-    absenceTypes.value = absenceTypesData.value;
   }
 });
 
@@ -81,7 +60,7 @@ function submitAbsence() {
   useFetch(`${API_URL}/absences`, {
     method: 'POST',
     body: {
-      company_id: selectedCompanyId.value,
+      company_id: absenceStore.selectedCompanyId,
       type_id: selectedTypeId.value,
       start_at: absenceDates.value.startDate,
       end_at: absenceDates.value.endDate,
@@ -127,7 +106,7 @@ function submitAbsence() {
             :id="company.id"
             :value="company.id"
             name="company_id"
-            :checked="selectedCompanyId === company.id"
+            :checked="absenceStore.selectedCompanyId === company.id"
             @change="handleCompanyChange(company.id)"
           />
           <span
@@ -141,10 +120,10 @@ function submitAbsence() {
     </Card>
 
     <!-- Absence type -->
-    <template v-if="selectedCompanyId">
+    <template v-if="absenceStore.isCompanySelected">
       <AbsenceTypeSelector
         placeholder="Frånvarutyp"
-        :absence-types="absenceTypes ?? []"
+        :absence-types="absenceStore.absences ?? []"
         :selected-absence-type="selectedAbsenceType"
         :selected-type-id="selectedTypeId"
         @update:selectedAbsenceType="(value) => (selectedAbsenceType = value)"
@@ -166,7 +145,11 @@ function submitAbsence() {
       </div>
     </template>
     <template
-      v-if="selectedAbsenceType && absenceDates.startDate && selectedCompanyId"
+      v-if="
+        selectedAbsenceType &&
+        absenceDates.startDate &&
+        absenceStore.isCompanySelected
+      "
     >
       <div class="flex justify-center items-center py-8">
         <button

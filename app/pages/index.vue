@@ -16,6 +16,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/dialog';
+import { AbsenceTypeSelector } from '~/components/select';
+import { useAbsenceStore } from '~/stores/absenceStore';
 import type { Absences } from '~/types';
 
 useState('pageTitle', () => 'Min Sida');
@@ -55,9 +57,15 @@ function dateFormat(date: string) {
   });
 }
 
-watchEffect(() => {
-  console.log('collapsed: ', isCollapsed.value);
-});
+const absenceStore = useAbsenceStore();
+const selectedAbsenceType = ref<string>('');
+const selectedTypeId = ref<string>('');
+
+function ensureCompanySelected(companyId: string) {
+  if (!absenceStore.selectedCompanyId) {
+    absenceStore.setSelectedCompanyId(companyId);
+  }
+}
 </script>
 
 <template>
@@ -152,7 +160,10 @@ watchEffect(() => {
                   <DialogHeader>
                     <DialogTitle>Radera Frånvaro</DialogTitle>
                     <DialogDescription>
-                      Är du säker på att du vill radera denna frånvaro?
+                      Är du säker på att du vill radera frånvaro
+                      <strong>{{ absence.absence_type }}</strong> för perioden
+                      {{ dateFormat(absence.start_at) }} -
+                      {{ dateFormat(absence.end_at) }}?
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter
@@ -163,12 +174,37 @@ watchEffect(() => {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
-              <Button
-                class="flex-1 mx-2 ring-2 rounded-xl ring-accent-light bg-accent-light text-white"
-              >
-                <span class="material-icons">edit</span>
-                <span>Ändra</span>
-              </Button>
+
+              <Dialog>
+                <DialogTrigger as-child>
+                  <Button
+                    class="flex-1 mx-2 ring-2 rounded-xl ring-accent-light bg-accent-light text-white"
+                    @click="ensureCompanySelected(absence.company_id)"
+                  >
+                    <span class="material-icons">edit</span>
+                    <span>Ändra</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent class="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Ändra Frånvaro</DialogTitle>
+                    <DialogDescription>
+                      Här har vi frånvarotyp dropdown och en kalender för att
+                      välja
+                    </DialogDescription>
+                  </DialogHeader>
+                  <AbsenceTypeSelector
+                    placeholder="Frånvarutyp"
+                    :absence-types="absenceStore.absences ?? []"
+                    :selected-absence-type="selectedAbsenceType"
+                    :selected-type-id="selectedTypeId"
+                    @update:selectedAbsenceType="
+                      (value) => (selectedAbsenceType = value)
+                    "
+                    @update:selectedTypeId="(value) => (selectedTypeId = value)"
+                  />
+                </DialogContent>
+              </Dialog>
             </AccordionContent>
           </div>
         </Transition>
