@@ -6,7 +6,9 @@ definePageMeta({
 </script>
 <template>
   <div class="flex flex-col h-auto">
-    <div class="bg-white dark:bg-primary-dark pt-8 pb-2">
+    <div
+      class="max-lg:bg-white bg-primary-light dark:bg-primary-dark pt-8 pb-2"
+    >
       <Headline>
         <template #right>
           <span class="material-icons lg:hidden">notifications</span>
