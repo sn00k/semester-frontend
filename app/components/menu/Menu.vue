@@ -8,7 +8,7 @@ const { menuItems } = storeToRefs(menuStore);
 
 <template>
   <div
-    class="flex justify-between lg:flex-col lg:justify-start dark:bg-zinc-950 bg-zinc-100 lg:bg-white lg:pl-[1px] dark:text-white lg:relative fixed inset-x-0 bottom-0"
+    class="flex justify-between items-center lg:flex-col lg:justify-start dark:bg-zinc-950 bg-zinc-100 lg:bg-white lg:pl-[1px] dark:text-white lg:relative fixed inset-x-0 bottom-0"
   >
     <template v-for="item in menuItems" :key="item.name">
       <div v-if="!item.hide">
