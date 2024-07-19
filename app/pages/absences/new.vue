@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import { useQuery } from '@tanstack/vue-query';
-import {
-  type Ref,
-  type ComputedRef,
-  computed,
-  ref,
-  watch,
-  onBeforeMount,
-} from 'vue';
+import { type Ref, computed, ref } from 'vue';
 import DatePicker from 'vue-tailwind-datepicker';
 import { Card } from '~/components/card';
 import { useAuthStore } from '~/stores/authStore';
@@ -31,6 +24,7 @@ const absenceDates = ref({
   startDate: '',
   endDate: '',
 });
+
 const { data, error } = useQuery({
   queryKey: ['user'],
   queryFn: async (): Promise<User> => {
@@ -71,10 +65,12 @@ function handleCompanyChange(companyId: string) {
   selectedCompanyId.value = companyId;
   refetchAbsenceTypes();
 }
+
 function selectAbsenceType(absenceType: AbsenceType) {
   selectedAbsenceType.value = absenceType.name;
   selectedTypeId.value = absenceType.id;
 }
+
 watchEffect(() => {
   if (error.value) {
     console.error('Error fetching user data:', error.value);
@@ -84,6 +80,7 @@ watchEffect(() => {
     absenceTypes.value = absenceTypesData.value;
   }
 });
+
 function submitAbsence() {
   useFetch(`${API_URL}/absences`, {
     method: 'POST',
