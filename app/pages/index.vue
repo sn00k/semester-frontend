@@ -176,7 +176,9 @@ watch(submitSuccess, (newValue) => {
                   <Button
                     class="flex-1 mx-2 bg-white ring-2 rounded-xl ring-accent-light text-accent-light dark:bg-zinc-800 dark:text-yellow-400 dark:ring-0"
                   >
-                    <span class="material-symbols-outlined">delete</span>
+                    <span class="material-symbols-outlined scale-75"
+                      >delete</span
+                    >
                     <span>Radera</span>
                   </Button>
                 </DialogTrigger>
@@ -205,7 +207,7 @@ watch(submitSuccess, (newValue) => {
                     class="flex-1 mx-2 ring-2 rounded-xl ring-accent-light bg-accent-light dark:bg-yellow-400 dark:text-black dark:ring-0 text-white"
                     @click="ensureCompanySelected(absence.company_id)"
                   >
-                    <span class="material-icons">edit</span>
+                    <span class="material-icons scale-75">edit</span>
                     <span>Ändra</span>
                   </Button>
                 </DialogTrigger>
