@@ -41,6 +41,8 @@ const absenceDates = ref({
 const { submitAbsence, submitError, submitSuccess, isSubmitting } =
   useSubmitAbsence();
 
+const { deleteAbsence, deleteError, isDeleting } = useDeleteAbsence();
+
 const fetcher = async (): Promise<Absences> =>
   await fetch(`${API_URL}/absences?user_id=${useAuthStore().user.id}`, {
     headers: {
@@ -169,9 +171,9 @@ watch(submitSuccess, (newValue) => {
                   <Button
                     class="flex-1 mx-2 bg-white ring-2 rounded-xl ring-accent-light text-accent-light dark:bg-zinc-800 dark:text-yellow-400 dark:ring-0"
                   >
-                    <span class="material-symbols-outlined scale-75"
-                      >delete</span
-                    >
+                    <span class="material-symbols-outlined scale-75">
+                      delete
+                    </span>
                     <span>Radera</span>
                   </Button>
                 </DialogTrigger>
@@ -188,9 +190,22 @@ watch(submitSuccess, (newValue) => {
                   <DialogFooter
                     class="gap-y-4 sm:flex-row-reverse sm:justify-start"
                   >
-                    <Button variant="secondary"> Avbryt </Button>
-                    <Button variant="secondary"> Bekräfta </Button>
+                    <DialogClose as-child>
+                      <Button variant="secondary"> Avbryt </Button>
+                    </DialogClose>
+                    <Button
+                      variant="secondary"
+                      @click="deleteAbsence({ absenceId: absence.id })"
+                    >
+                      Bekräfta
+                    </Button>
                   </DialogFooter>
+                  <template v-if="isDeleting">
+                    <p>Submitting...</p>
+                  </template>
+                  <template v-if="deleteError">
+                    <p>Error: {{ deleteError.message }}</p>
+                  </template>
                 </DialogContent>
               </Dialog>
 
