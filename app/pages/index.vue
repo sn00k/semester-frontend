@@ -64,11 +64,12 @@ const {
 const expandedItemId = ref<string | null>(null);
 
 function dateFormat(date: string) {
-  return new Date(date).toLocaleDateString('sv-SE', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
+  const d = new Date(date);
+  const year = String(d.getFullYear()).slice(-2); // Get the last two digits of the year
+  const month = String(d.getMonth() + 1).padStart(2, '0'); // Months are zero-based, so add 1
+  const day = String(d.getDate()).padStart(2, '0'); // Get the day and pad with leading zero if necessary
+
+  return `${year}/${month}/${day}`;
 }
 
 function ensureCompanySelected(companyId: string) {
@@ -108,24 +109,29 @@ watch(submitSuccess, (newValue) => {
         :value="absence.id"
       >
         <div
-          class="flex bg-white text-black dark:text-white dark:bg-[#1F1F1F] gap-x-4 mt-4 items-center w-full p-2 rounded-md"
+          class="flex bg-white text-black dark:text-white dark:bg-[#1F1F1F] gap-x-2 sm:gap-x-4 mt-4 items-center w-full p-2 rounded-md"
           :class="{ 'rounded-b-none': expandedItemId === absence.id }"
         >
           <div
             class="inline-block bg-gray-300 size-10 rounded-full ring-2 ring-white"
-          ></div>
+          />
           <div class="flex flex-col grow">
             <div class="font-semibold">
               <span v-text="absence.absence_type"></span>
             </div>
-            <div>
-              <span class="text-sm"
-                >{{ dateFormat(absence.start_at) }} -
-                {{ dateFormat(absence.end_at) }}</span
-              >
+            <div class="text-xs">
+              <div>
+                <span>
+                  {{ dateFormat(absence.start_at) }} -
+                  {{ dateFormat(absence.end_at) }}
+                </span>
+              </div>
+              <span>Skapad: {{ dateFormat(absence.created_at) }}</span>
             </div>
           </div>
-          <div class="bg-gray-100 dark:text-white dark:bg-zinc-800">
+          <div
+            class="bg-gray-100 dark:text-white text-xs sm:text-base dark:bg-zinc-800"
+          >
             <div
               class="flex items-center gap-x-2 rounded-md border border-gray-400 px-2 py-1"
             >
@@ -170,7 +176,7 @@ watch(submitSuccess, (newValue) => {
                   <Button
                     class="flex-1 mx-2 bg-white ring-2 rounded-xl ring-accent-light text-accent-light dark:bg-zinc-800 dark:text-yellow-400 dark:ring-0"
                   >
-                    <span class="material-icons">delete_forever</span>
+                    <span class="material-symbols-outlined">delete</span>
                     <span>Radera</span>
                   </Button>
                 </DialogTrigger>
