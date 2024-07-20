@@ -67,7 +67,7 @@ watch(submitSuccess, (newValue) => {
 </script>
 
 <template>
-  <div class="flex flex-col p-4">
+  <div class="flex flex-col py-4">
     <!-- Company -->
     <Headline>
       <template #left>
@@ -87,7 +87,7 @@ watch(submitSuccess, (newValue) => {
       <div
         v-for="company in user?.employments"
         :key="company.id"
-        class="flex p-4 gap-x-3 w-full border-b-2 last:border-b-0"
+        class="flex gap-x-3 w-full border-b-2 last:border-b-0"
       >
         <div class="flex justify-start items-center gap-x-4">
           <input

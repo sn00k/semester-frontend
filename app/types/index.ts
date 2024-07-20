@@ -56,3 +56,21 @@ export type User = {
   created_at: string;
   employments?: Company[];
 };
+
+export type Team = {
+  id: string;
+  name: string;
+  members: User[];
+  created_at: string;
+  updated_at: string;
+};
+
+export type Teams = {
+  data: Team[];
+};
+
+export type TeamAbsence = {
+  teamId: string;
+  teamName: string;
+  absences: { [key: string]: Absence[] };
+};
