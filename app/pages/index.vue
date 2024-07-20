@@ -63,14 +63,6 @@ const {
 
 const expandedItemId = ref<string | null>(null);
 
-function dateFormat(date: string) {
-  return new Date(date).toLocaleDateString('sv-SE', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
-}
-
 function ensureCompanySelected(companyId: string) {
   if (!absenceStore.selectedCompanyId) {
     absenceStore.setSelectedCompanyId(companyId);
@@ -108,7 +100,7 @@ watch(submitSuccess, (newValue) => {
         :value="absence.id"
       >
         <div
-          class="flex bg-white text-black dark:text-white dark:bg-[#1F1F1F] gap-x-4 mt-4 items-center w-full p-2 rounded-md"
+          class="flex bg-white text-black dark:text-white dark:bg-[#1F1F1F] gap-x-2 sm:gap-x-4 mt-4 items-center w-full p-2 rounded-md"
           :class="{ 'rounded-b-none': expandedItemId === absence.id }"
         >
           <div
@@ -118,14 +110,21 @@ watch(submitSuccess, (newValue) => {
             <div class="font-semibold">
               <span v-text="absence.absence_type"></span>
             </div>
-            <div>
-              <span class="text-sm"
-                >{{ dateFormat(absence.start_at) }} -
-                {{ dateFormat(absence.end_at) }}</span
-              >
+            <div class="text-xs">
+              <div>
+                <span>
+                  {{ $dayjs(absence.start_at).format('YY/MM/DD') }} -
+                  {{ $dayjs(absence.end_at).format('YY/MM/DD') }}
+                </span>
+              </div>
+              <span>
+                Skapad: {{ $dayjs(absence.created_at).format('YY/MM/DD') }}
+              </span>
             </div>
           </div>
-          <div class="bg-gray-100 dark:text-white dark:bg-zinc-800">
+          <div
+            class="bg-gray-100 dark:text-white text-xs sm:text-base dark:bg-zinc-800"
+          >
             <div
               class="flex items-center gap-x-2 rounded-md border border-gray-400 px-2 py-1"
             >
@@ -170,7 +169,9 @@ watch(submitSuccess, (newValue) => {
                   <Button
                     class="flex-1 mx-2 bg-white ring-2 rounded-xl ring-accent-light text-accent-light dark:bg-zinc-800 dark:text-yellow-400 dark:ring-0"
                   >
-                    <span class="material-icons">delete_forever</span>
+                    <span class="material-symbols-outlined scale-75"
+                      >delete</span
+                    >
                     <span>Radera</span>
                   </Button>
                 </DialogTrigger>
@@ -180,8 +181,8 @@ watch(submitSuccess, (newValue) => {
                     <DialogDescription>
                       Är du säker på att du vill radera frånvaro
                       <strong>{{ absence.absence_type }}</strong> för perioden
-                      {{ dateFormat(absence.start_at) }} -
-                      {{ dateFormat(absence.end_at) }}?
+                      {{ $dayjs(absence.start_at).format('YY/MM/DD') }} -
+                      {{ $dayjs(absence.end_at).format('YY/MM/DD') }}?
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter
@@ -199,7 +200,7 @@ watch(submitSuccess, (newValue) => {
                     class="flex-1 mx-2 ring-2 rounded-xl ring-accent-light bg-accent-light dark:bg-yellow-400 dark:text-black dark:ring-0 text-white"
                     @click="ensureCompanySelected(absence.company_id)"
                   >
-                    <span class="material-icons">edit</span>
+                    <span class="material-icons scale-75">edit</span>
                     <span>Ändra</span>
                   </Button>
                 </DialogTrigger>

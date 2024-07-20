@@ -13,6 +13,8 @@ export type Absence = {
   company_id: string;
   start_at: string;
   end_at: string;
+  created_at: string;
+  updated_at: string;
   approved: boolean | null;
   approved_by: string;
   employee: string;
