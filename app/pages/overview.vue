@@ -37,29 +37,25 @@ function selectTeam(teamId: string) {
             alt=""
           />
         </template>
-        <template #right>
-          <NuxtLink to="/notifications">
-            <span class="material-icons lg:hidden">notifications</span>
-          </NuxtLink>
-        </template>
-      </Headline>
-      <div class="flex justify-center">
-        <div
-          class="flex items-center justify-between w-3/4 rounded-full bg-primary-light"
-        >
+        <template #tabs>
           <span
             v-for="team in teams.data"
             :key="team.id"
             :class="{
-              'rounded-full bg-blue-500 text-white': team.id === selectedteamId,
+              'border-b-blue-500': team.id === selectedteamId,
             }"
             @click="selectTeam(team.id)"
             class="px-4 py-2"
           >
             {{ team.name }}
           </span>
-        </div>
-      </div>
+        </template>
+        <template #right>
+          <NuxtLink to="/notifications">
+            <span class="material-icons lg:hidden">notifications</span>
+          </NuxtLink>
+        </template>
+      </Headline>
     </header>
   </div>
 </template>
