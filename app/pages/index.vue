@@ -63,15 +63,6 @@ const {
 
 const expandedItemId = ref<string | null>(null);
 
-function dateFormat(date: string) {
-  const d = new Date(date);
-  const year = String(d.getFullYear()).slice(-2); // Get the last two digits of the year
-  const month = String(d.getMonth() + 1).padStart(2, '0'); // Months are zero-based, so add 1
-  const day = String(d.getDate()).padStart(2, '0'); // Get the day and pad with leading zero if necessary
-
-  return `${year}/${month}/${day}`;
-}
-
 function ensureCompanySelected(companyId: string) {
   if (!absenceStore.selectedCompanyId) {
     absenceStore.setSelectedCompanyId(companyId);
@@ -114,7 +105,7 @@ watch(submitSuccess, (newValue) => {
         >
           <div
             class="inline-block bg-gray-300 size-10 rounded-full ring-2 ring-white"
-          />
+          ></div>
           <div class="flex flex-col grow">
             <div class="font-semibold">
               <span v-text="absence.absence_type"></span>
@@ -122,11 +113,13 @@ watch(submitSuccess, (newValue) => {
             <div class="text-xs">
               <div>
                 <span>
-                  {{ dateFormat(absence.start_at) }} -
-                  {{ dateFormat(absence.end_at) }}
+                  {{ $dayjs(absence.start_at).format('YY/MM/DD') }} -
+                  {{ $dayjs(absence.end_at).format('YY/MM/DD') }}
                 </span>
               </div>
-              <span>Skapad: {{ dateFormat(absence.created_at) }}</span>
+              <span>
+                Skapad: {{ $dayjs(absence.created_at).format('YY/MM/DD') }}
+              </span>
             </div>
           </div>
           <div
@@ -188,8 +181,8 @@ watch(submitSuccess, (newValue) => {
                     <DialogDescription>
                       Är du säker på att du vill radera frånvaro
                       <strong>{{ absence.absence_type }}</strong> för perioden
-                      {{ dateFormat(absence.start_at) }} -
-                      {{ dateFormat(absence.end_at) }}?
+                      {{ $dayjs(absence.start_at).format('YY/MM/DD') }} -
+                      {{ $dayjs(absence.end_at).format('YY/MM/DD') }}?
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter
