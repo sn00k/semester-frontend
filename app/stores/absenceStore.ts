@@ -1,12 +1,24 @@
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { useAuthStore } from '~/stores/authStore';
 import type { AbsenceType } from '~/types';
+
+type AbsenceDates = {
+  startDate: string;
+  endDate: string;
+};
+
+type AbsenceForm = {
+  absenceId?: string;
+  absenceDates: AbsenceDates;
+  selectedTypeId: string;
+  action: 'create' | 'update';
+};
 
 export const useAbsenceStore = defineStore('absenceStore', () => {
   const absences = ref<AbsenceType[] | null>(null);
   const selectedCompanyId = ref<string | null>(null);
 
-  async function fetchAbsences(companyId: string) {
+  async function fetchAbsenceTypes(companyId: string) {
     const API_URL = useRuntimeConfig().public.apiUrl;
     const response = await fetch(
       `${API_URL}/companies/${companyId}/absence-types`,
@@ -24,7 +36,7 @@ export const useAbsenceStore = defineStore('absenceStore', () => {
   function setSelectedCompanyId(companyId: string) {
     selectedCompanyId.value = companyId;
     if (companyId && (!absences.value || absences.value.length === 0)) {
-      fetchAbsences(companyId);
+      fetchAbsenceTypes(companyId);
     }
   }
 
@@ -33,7 +45,7 @@ export const useAbsenceStore = defineStore('absenceStore', () => {
   return {
     absences,
     selectedCompanyId,
-    fetchAbsences,
+    fetchAbsenceTypes,
     setSelectedCompanyId,
     isCompanySelected,
   };
