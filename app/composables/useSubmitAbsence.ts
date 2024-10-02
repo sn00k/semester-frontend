@@ -1,5 +1,4 @@
 import { useAuthStore, useAbsenceStore } from '~/stores';
-import type { AbsenceType } from '~/types';
 import { useQueryClient, useMutation } from '@tanstack/vue-query';
 
 type AbsenceDates = {
@@ -34,33 +33,34 @@ export function useSubmitAbsence() {
       const authStore = useAuthStore();
       const absenceStore = useAbsenceStore();
 
-      const response = await fetch(uri, {
+      const { data, error } = await useFetch(uri, {
         method: action === 'create' ? 'POST' : 'PATCH',
-        body: JSON.stringify({
+        body: {
           company_id: absenceStore.selectedCompanyId,
           type_id: selectedTypeId,
           start_at: absenceDates.startDate,
           end_at: absenceDates.endDate,
           user_id: authStore.user.id,
-        }),
+        },
         headers: {
           Authorization: `Bearer ${useCookie('token').value}`,
-          'Content-Type': 'application/json',
+        },
+        onResponse({ response }) {
+          if (response.status === 204) {
+            return null;
+          }
+        },
+        onResponseError({ response }) {
+          const errorMessage = response._data || 'Failed to submit absence';
+          throw new Error(errorMessage);
         },
       });
 
-      // If the response is 204, there's no content to parse
-      if (response.status === 204) {
-        return null;
+      if (error.value) {
+        throw new Error(error.value.message || 'Failed to submit absence');
       }
 
-      // Attempt to parse the response as JSON
-      const json = await response.json();
-      if (!response.ok) {
-        throw new Error(json.message || 'Failed to submit absence');
-      }
-
-      return json;
+      return data.value;
     },
     onMutate: () => {
       isSubmitting.value = true;

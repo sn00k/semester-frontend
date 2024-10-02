@@ -11,30 +11,31 @@ export function useDeleteAbsence() {
   const deleteError = ref<Error | null>(null);
 
   const mutation = useMutation({
-    mutationFn: async ({ absenceId }: { absenceId: string }) => {
+    mutationFn: async ({ absenceId }: AbsenceDelete) => {
       const API_URL = useRuntimeConfig().public.apiUrl;
       const uri = `${API_URL}/absences/${absenceId}`;
 
-      const response = await fetch(uri, {
+      const { data, error } = await useFetch(uri, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${useCookie('token').value}`,
-          'Content-Type': 'application/json',
+        },
+        onResponse({ response }) {
+          if (response.status === 204) {
+            return null;
+          }
+        },
+        onResponseError({ response }) {
+          const errorMessage = response._data || 'Failed to delete absence';
+          throw new Error(errorMessage);
         },
       });
 
-      // If the response is 204, there's no content to parse
-      if (response.status === 204) {
-        return null;
+      if (error.value) {
+        throw new Error(error.value.message || 'Failed to delete absence');
       }
 
-      // Attempt to parse the response as JSON
-      const json = await response.json();
-      if (!response.ok) {
-        throw new Error(json.message || 'Failed to submit absence');
-      }
-
-      return json;
+      return data.value;
     },
     onMutate: () => {
       isDeleting.value = true;
@@ -53,8 +54,8 @@ export function useDeleteAbsence() {
     },
   });
 
-  function deleteAbsence({ absenceId }: { absenceId: string }) {
-    mutation.mutate({ absenceId });
+  function deleteAbsence(absenceForm: AbsenceDelete) {
+    mutation.mutate(absenceForm);
   }
 
   return { isDeleting, deleteSuccess, deleteError, deleteAbsence };

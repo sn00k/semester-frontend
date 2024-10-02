@@ -4,6 +4,17 @@
 @tailwind components;
 @tailwind utilities;
 
+input[type='radio'],
+input[type='checkbox'] {
+  cursor: pointer;
+}
+
+@layer utilities {
+  .icon-filled {
+    font-variation-settings: 'FILL' 1;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -77,11 +88,6 @@
   body {
     @apply bg-background text-foreground;
   }
-}
-
-input[type='radio'],
-input[type='checkbox'] {
-  cursor: pointer;
 }
 
 @layer base {
