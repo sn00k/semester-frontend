@@ -5,7 +5,6 @@ import { Card } from '~/components/card';
 import { AbsenceTypeSelector } from '~/components/select';
 import { useAuthStore } from '~/stores/authStore';
 import { useAbsenceStore } from '~/stores/absenceStore';
-import { useSubmitAbsence } from '~/composables';
 import type { User } from '~/types';
 
 useState('pageTitle', () => 'Ny Frånvaro');

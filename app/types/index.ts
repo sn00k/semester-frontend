@@ -38,6 +38,23 @@ export type AbsenceTypes = {
   data: AbsenceType[];
 };
 
+export type AbsenceApplication = {
+  id: string,
+  start_at: string,
+  end_at: string,
+  approved: boolean,
+  company_id: string,
+  employee: string,
+  absence_type: string,
+  created_at: string,
+  updated_at: string
+}
+
+export type AbsenceResponse = {
+  teamId: string,
+  absences: AbsenceApplication[]
+}
+
 export type Company = {
   id: string;
   name: string;
@@ -51,8 +68,20 @@ export type User = {
   first_name: string;
   last_name: string;
   email: string;
-  email_verified_at: string;
+  email_verified_at?: string;
   updated_at: string;
   created_at: string;
   employments?: Company[];
 };
+
+export type Team = {
+  id: string,
+  name: string,
+  members?: Array<User>,
+  created_at: string,
+  updated_at: string
+};
+
+export type TeamsResponse = {
+  data: Team[]
+}

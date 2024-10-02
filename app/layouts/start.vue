@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useCurrentPage } from '~/composables/useCurrentPage';
-
 const { currentPage } = useCurrentPage();
 </script>
 

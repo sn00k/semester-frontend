@@ -27,7 +27,6 @@ import {
 } from '@/components/dialog';
 import { AbsenceTypeSelector } from '~/components/select';
 import { useAbsenceStore, useAuthStore } from '~/stores';
-import { useSubmitAbsence } from '~/composables';
 import type { Absences } from '~/types';
 
 useState('pageTitle', () => 'Min Sida');

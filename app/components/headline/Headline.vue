@@ -7,6 +7,7 @@
   <div class="flex gap-x-4 items-center justify-between">
     <slot name="left"></slot>
     <h1 class="text-2xl font-bold text-center dark:text-white text-black">{{ route.meta.title }}</h1>
+    <slot name="center"></slot>
   </div>
   <div>
     <slot name="right"></slot>
