@@ -1,5 +1,8 @@
 <script setup lang="ts">
 const { currentPage } = useCurrentPage();
+if (!useColorMode().value) {
+  useColorMode().preference = 'light';
+}
 </script>
 
 <template>

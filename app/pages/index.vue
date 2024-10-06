@@ -83,7 +83,7 @@ const absenceColumns = [
     },
     cell: ({ row }: { row: any }) => {
       return (
-        <div className="px-1">
+        <div class="px-1">
           <TableCheckbox
             checked={row.getIsSelected()}
             disabled={!row.getCanSelect()}
@@ -211,7 +211,7 @@ watch(submitSuccess, (newValue) => {
                 :props="header.getContext()"
               />
               <ClientOnly>
-                {{ { asc: '↑', desc: '↓' }[header.column.getIsSorted()] }}
+                {{ { asc: '↑', desc: '↓' }[header.column.getIsSorted() as 'asc' | 'desc'] }}
               </ClientOnly>
             </th>
           </tr>

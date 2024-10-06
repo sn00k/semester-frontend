@@ -1,23 +1,21 @@
-import { useAuthStore } from '~/stores';
 import { useQueryClient, useQuery } from '@tanstack/vue-query';
-import type { User, Team, TeamResponse } from '@/types'
+import type { AbsenceResponse } from '@/types';
 
-
-export function useGetTeams() {
+export function useGetAbsenceRequests(teamId: string) {
   const API_URL = useRuntimeConfig().public.apiUrl;
   const queryClient = useQueryClient();
-  const fetcher = async (): Promise<TeamResponse> =>
-  await fetch(`${API_URL}/teams`, {
-    headers: {
-      Authorization: `Bearer ${useCookie('token').value}`,
-      Accept: 'application/json',
-    },
-  }).then((response) => response.json());
+  const fetcher = async (): Promise<AbsenceResponse> =>
+    await fetch(`${API_URL}/teams/${teamId}/absences`, {
+      headers: {
+        Authorization: `Bearer ${useCookie('token').value}`,
+        Accept: 'application/json',
+      },
+    }).then((response) => response.json());
 
-const { data: teams } = useQuery({
-  queryKey: ['teams'],
-  queryFn: fetcher,
-});
+  const { data: absenceRequests } = useQuery({
+    queryKey: ['absenceRequests', teamId],
+    queryFn: fetcher,
+  });
 
-return { teams }
+  return { absenceRequests };
 }
