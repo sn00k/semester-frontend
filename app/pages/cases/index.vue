@@ -137,36 +137,38 @@ watch(
   </div>
   <div class="flex flex-col gap-y-6">
     <div class="flex flex-col lg:py-0">
-      <div
-        v-for="absence in absenceApplications"
-        :key="absence.id"
-        class="flex bg-white text-black dark:text-white dark:bg-[#1F1F1F] gap-x-6 sm:gap-x-4 items-center w-full p-2 border-b-2 last:border-b-0 dark:border-[#292929]"
-      >
-        <div>
-          <TableCheckbox @change="setSelectedAbsences(absence.id)" />
-        </div>
+      <div v-if="absenceApplications.length > 0">
         <div
-          class="inline-block bg-gray-300 size-10 rounded-full ring-2 ring-white"
-        ></div>
-        <div class="flex flex-col grow">
-          <div class="font-semibold">
-            <span>{{ absence.employee }}</span>
-          </div>
+          v-for="absence in absenceApplications"
+          :key="absence.id"
+          class="flex bg-white text-black dark:text-white dark:bg-[#1F1F1F] gap-x-6 sm:gap-x-4 items-center w-full p-2 border-b-2 last:border-b-0 dark:border-[#292929]"
+        >
           <div>
-            <span>{{ absence.absence_type }}</span>
+            <TableCheckbox @change="setSelectedAbsences(absence.id)" />
           </div>
-          <div class="text-xs">
+          <div
+            class="inline-block bg-gray-300 size-10 rounded-full ring-2 ring-white"
+          ></div>
+          <div class="flex flex-col grow">
+            <div class="font-semibold">
+              <span>{{ absence.employee }}</span>
+            </div>
             <div>
-              <span>
-                {{ $dayjs(absence.start_at).format('YY/MM/DD') }} -
-                {{ $dayjs(absence.end_at).format('YY/MM/DD') }}
-              </span>
+              <span>{{ absence.absence_type }}</span>
+            </div>
+            <div class="text-xs">
+              <div>
+                <span>
+                  {{ $dayjs(absence.start_at).format('YY/MM/DD') }} -
+                  {{ $dayjs(absence.end_at).format('YY/MM/DD') }}
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="flex justify-center gap-x-4 px-4">
+    <div class="flex justify-center gap-x-4 px-4" v-if="absenceApplications.length > 0">
       <Button
         size="lg"
         class="bg-zinc-100 dark:bg-[#202020] dark:text-accent-dark text-lg rounded-lg px-5 flex w-full"
@@ -181,6 +183,9 @@ watch(
       >
         Godkänn
       </Button>
+    </div>
+    <div v-else class="flex items-center justify-center text-2xl">
+      <h2>Du har inga ärenden att hantera 🎉</h2>
     </div>
   </div>
 </template>

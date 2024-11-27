@@ -39,7 +39,7 @@ async function handleLogin() {
   useCookie('token', {
     expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
   }).value = loginData.accessToken;
-  
+
   const { isAuthenticated } = storeToRefs(authStore);
   if (isAuthenticated.value) navigateTo('/');
 }

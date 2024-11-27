@@ -13,12 +13,12 @@ export type Absence = {
   company_id: string;
   start_at: string;
   end_at: string;
-  created_at: string;
-  updated_at: string;
   approved: boolean | null;
   approved_by: string;
   employee: string;
   absence_type: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export type Absences = {
@@ -38,23 +38,17 @@ export type AbsenceTypes = {
   data: AbsenceType[];
 };
 
-export type AbsenceApplication = {
-  id: string,
-  start_at: string,
-  end_at: string,
-  approved: boolean,
-  company_id: string,
-  employee: string,
-  absence_type: string,
-  created_at: string,
-  updated_at: string
-}
-
+export type AbsenceApplication = Omit<Absence, 'approved_by'>;
 export type AbsenceResponse = {
   teamId: string,
-  absences: AbsenceApplication[]
+  absences: Absence[]
 }
-
+export type AbsencesByWeek = {
+  teamId: string;
+  absences: {
+    [key:string]: Absence[]
+  }
+}
 export type Company = {
   id: string;
   name: string;
